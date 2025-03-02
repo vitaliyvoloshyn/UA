@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, TypeVar
 
 from src.utilitiesaccounting_v3.repository import SqlRepository
-from src.utilitiesaccounting_v3.uow import UnitOfWork, Repositories
+from src.utilitiesaccounting_v3.uow import UnitOfWork
 
 REPO = TypeVar('REPO', bound=SqlRepository)
 

@@ -17,8 +17,6 @@ class Repositories:
 
 
 class UnitOfWork[REPO]:
-    # category: REPO = CategoryRepository
-    # provider: REPO = ProviderRepository
 
     def __init__(self, session=None):
         self.session = session
