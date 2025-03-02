@@ -44,10 +44,9 @@ class Counter(Base):
     # main fields
     name: Mapped[str] = mapped_column(unique=True)
     measurement_unit_id: Mapped[int] = mapped_column(ForeignKey('measurement_units.id'), nullable=True)
-    provider_id: Mapped[int] = mapped_column(ForeignKey('providers.id'))
+    tariff_id: Mapped[int] = mapped_column(ForeignKey('tariffs.id'))
     # relationships
     measurement_unit: Mapped['MeasurementUnit'] = relationship(back_populates='counters', lazy='selectin')
-    provider: Mapped['Provider'] = relationship(back_populates='counters', lazy='selectin')
     counter_readings: Mapped[List['CounterReading']] = relationship(back_populates='counter', lazy='selectin')
     tariff: Mapped['Tariff'] = relationship(back_populates='counter')
 
@@ -59,7 +58,7 @@ class Provider(Base):
     category_id: Mapped[int] = mapped_column(ForeignKey('categories.id'))
     # relationships
     category: Mapped['Category'] = relationship(back_populates='provider', lazy='selectin')
-    counters: Mapped[List['Counter']] = relationship(back_populates='provider', lazy='selectin')
+    tariffs: Mapped[List['Tariff']] = relationship(back_populates='provider', lazy='selectin')
 
 
 class TariffType(Base):
@@ -78,7 +77,8 @@ class Tariff(Base):
     from_date: Mapped[date]
     to_date: Mapped[date] = mapped_column(nullable=True)
     tariff_type_id: Mapped[int] = mapped_column(ForeignKey('tariff_types.id'))
-    counter_id: Mapped[int] = mapped_column(ForeignKey('counters.id'), nullable=True)
+    provider_id: Mapped[int] = mapped_column(ForeignKey('providers.id'))
     # relationships
     tariff_type: Mapped['TariffType'] = relationship(back_populates='tariffs', lazy='selectin')
     counter: Mapped['Counter'] = relationship(back_populates='tariff')
+    provider: Mapped['Provider'] = relationship(back_populates='tariffs')
