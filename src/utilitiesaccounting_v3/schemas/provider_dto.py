@@ -3,7 +3,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from src.utilitiesaccounting_v3.schemas.category_dto import CategoryDTO
-from src.utilitiesaccounting_v3.schemas.counter_dto import CounterDTO
+from src.utilitiesaccounting_v3.schemas.tariff_dto import TariffDTO
 
 
 class ProviderAddDTO(BaseModel):
@@ -17,4 +17,4 @@ class ProviderDTO(ProviderAddDTO):
 
 class ProviderRelDTO(ProviderDTO):
     category: 'CategoryDTO'
-    counters: Optional[List['CounterDTO']] = None
+    tariffs: List['TariffDTO']
