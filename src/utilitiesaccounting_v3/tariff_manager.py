@@ -8,5 +8,8 @@ class TariffManager(ABC):
 
 
 class SubscriptionTariffManager(TariffManager):
+    """
+    Вытащить тариф
+    """
     def calculate(self):
         ...

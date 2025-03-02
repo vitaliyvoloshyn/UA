@@ -23,6 +23,7 @@ from src.utilitiesaccounting_v3.schemas.provider_dto import ProviderAddDTO
 from src.utilitiesaccounting_v3.schemas.tariff_dto import TariffAddDTO
 from src.utilitiesaccounting_v3.schemas.tariff_type_dto import TariffTypeAddDTO
 
+
 T = TypeVar("T", bound=BaseService)
 S = TypeVar("S", bound=Base)
 B = TypeVar("B", bound=BaseModel)

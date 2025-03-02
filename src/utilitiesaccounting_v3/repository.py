@@ -64,7 +64,7 @@ class SqlRepository(RepositoryBase):
         sql_data = self.session.execute(query).scalars().all()
         if not convert:
             return sql_data
-        schemas = self._convert_sql_to_schema(sql_data)
+        schemas = self._convert_sql_to_schema(sql_data, relation)
         return schemas
 
     def update(self, pk: int, **data) -> Sequence[Row]:

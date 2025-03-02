@@ -36,14 +36,11 @@ class UnitOfWork[REPO]:
     def __exit__(self, exc_type, exc_val, exc_tb):
         try:
             self.commit()
-            print('commit')
         except Exception as e:
             self.rollback()
             print(e)
-            print('rollback')
         finally:
             self.session.close()
-            print('close')
 
     def rollback(self):
         self.session.rollback()
