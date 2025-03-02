@@ -3,8 +3,8 @@ from typing import TypeVar
 
 from sqlalchemy.orm import Session
 
-from src.utilitiesaccounting_v3.database import db_session_maker
-from src.utilitiesaccounting_v3.repository import SqlRepository, CategoryRepository, ProviderRepository, \
+from src.utilitiesaccounting_v4.database import db_session_maker
+from src.utilitiesaccounting_v4.repository import SqlRepository, CategoryRepository, ProviderRepository, \
     MeasurementUnitRepository, TariffTypeRepository, CounterRepository, CounterReadingRepository, TariffRepository
 
 REPO = TypeVar('REPO', bound=SqlRepository)

@@ -3,8 +3,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from src.utilitiesaccounting_v3.schemas.counter_dto import CounterDTO
-from src.utilitiesaccounting_v3.schemas.tariff_type_dto import TariffTypeDTO
+from src.utilitiesaccounting_v4.schemas.counter_dto import CounterDTO
+from src.utilitiesaccounting_v4.schemas.tariff_type_dto import TariffTypeDTO
 
 
 class TariffAddDTO(BaseModel):

@@ -1,6 +1,6 @@
 import logging
 
-from src.utilitiesaccounting_v3.services import (CategoryService,
+from src.utilitiesaccounting_v4.services import (CategoryService,
                                                  CounterService,
                                                  CounterReadingService,
                                                  TariffService,

@@ -4,8 +4,8 @@ from typing import TypeVar
 
 from pydantic import BaseModel
 
-from src.utilitiesaccounting_v3.models import Base
-from src.utilitiesaccounting_v3.services import MeasurementUnitService, BaseService, CategoryService, TariffTypeService, \
+from src.utilitiesaccounting_v4.models import Base
+from src.utilitiesaccounting_v4.services import MeasurementUnitService, BaseService, CategoryService, TariffTypeService, \
     ProviderService, CounterService, CounterReadingService, TariffService
 
 """Порядок добавления сущностей в БД
@@ -15,13 +15,13 @@ from src.utilitiesaccounting_v3.services import MeasurementUnitService, BaseServ
 - категория;
 - оператор;
 """
-from src.utilitiesaccounting_v3.schemas.category_dto import CategoryAddDTO
-from src.utilitiesaccounting_v3.schemas.counter_dto import CounterAddDTO
-from src.utilitiesaccounting_v3.schemas.counter_reading_dto import CounterReadingAddDTO
-from src.utilitiesaccounting_v3.schemas.measurement_unit_dto import MeasurementUnitAddDTO
-from src.utilitiesaccounting_v3.schemas.provider_dto import ProviderAddDTO
-from src.utilitiesaccounting_v3.schemas.tariff_dto import TariffAddDTO
-from src.utilitiesaccounting_v3.schemas.tariff_type_dto import TariffTypeAddDTO
+from src.utilitiesaccounting_v4.schemas.category_dto import CategoryAddDTO
+from src.utilitiesaccounting_v4.schemas.counter_dto import CounterAddDTO
+from src.utilitiesaccounting_v4.schemas.counter_reading_dto import CounterReadingAddDTO
+from src.utilitiesaccounting_v4.schemas.measurement_unit_dto import MeasurementUnitAddDTO
+from src.utilitiesaccounting_v4.schemas.provider_dto import ProviderAddDTO
+from src.utilitiesaccounting_v4.schemas.tariff_dto import TariffAddDTO
+from src.utilitiesaccounting_v4.schemas.tariff_type_dto import TariffTypeAddDTO
 
 
 T = TypeVar("T", bound=BaseService)

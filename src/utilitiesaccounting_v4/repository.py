@@ -5,15 +5,15 @@ from pydantic import BaseModel
 from sqlalchemy import select, update, delete, Row
 from sqlalchemy.orm import Session
 
-from src.utilitiesaccounting_v3.models import Base, Category, Provider, MeasurementUnit, Counter, CounterReading, \
+from src.utilitiesaccounting_v4.models import Base, Category, Provider, MeasurementUnit, Counter, CounterReading, \
     TariffType, Tariff
-from src.utilitiesaccounting_v3.schemas.category_dto import CategoryDTO, CategoryAddDTO, CategoryRelDTO
-from src.utilitiesaccounting_v3.schemas.counter_dto import CounterDTO, CounterAddDTO, CounterRelDTO
-from src.utilitiesaccounting_v3.schemas.counter_reading_dto import CounterReadingDTO, CounterReadingAddDTO
-from src.utilitiesaccounting_v3.schemas.measurement_unit_dto import MeasurementUnitDTO, MeasurementUnitAddDTO
-from src.utilitiesaccounting_v3.schemas.provider_dto import ProviderDTO, ProviderAddDTO, ProviderRelDTO
-from src.utilitiesaccounting_v3.schemas.tariff_dto import TariffRelDTO, TariffAddDTO, TariffDTO
-from src.utilitiesaccounting_v3.schemas.tariff_type_dto import TariffTypeDTO, TariffTypeAddDTO
+from src.utilitiesaccounting_v4.schemas.category_dto import CategoryDTO, CategoryAddDTO, CategoryRelDTO
+from src.utilitiesaccounting_v4.schemas.counter_dto import CounterDTO, CounterAddDTO, CounterRelDTO
+from src.utilitiesaccounting_v4.schemas.counter_reading_dto import CounterReadingDTO, CounterReadingAddDTO
+from src.utilitiesaccounting_v4.schemas.measurement_unit_dto import MeasurementUnitDTO, MeasurementUnitAddDTO
+from src.utilitiesaccounting_v4.schemas.provider_dto import ProviderDTO, ProviderAddDTO, ProviderRelDTO
+from src.utilitiesaccounting_v4.schemas.tariff_dto import TariffRelDTO, TariffAddDTO, TariffDTO
+from src.utilitiesaccounting_v4.schemas.tariff_type_dto import TariffTypeDTO, TariffTypeAddDTO
 
 SQLModel = TypeVar('SQLModel', bound=Base)
 SchemaModel = TypeVar('SchemaModel', bound=BaseModel)
