@@ -1,0 +1,58 @@
+from dataclasses import dataclass
+from typing import TypeVar
+
+from sqlalchemy.orm import Session
+
+from src.utilitiesaccounting_v3.database import db_session_maker
+from src.utilitiesaccounting_v3.repository import SqlRepository, CategoryRepository, ProviderRepository, \
+    MeasurementUnitRepository, TariffTypeRepository, CounterRepository, CounterReadingRepository, TariffRepository
+
+REPO = TypeVar('REPO', bound=SqlRepository)
+
+
+@dataclass
+class Repositories:
+    category: REPO = CategoryRepository
+    provider: REPO = ProviderRepository
+
+
+class UnitOfWork[REPO]:
+    # category: REPO = CategoryRepository
+    # provider: REPO = ProviderRepository
+
+    def __init__(self, session=None):
+        self.session = session
+        if session is None:
+            self.session: Session = db_session_maker()
+        self.category = CategoryRepository(self.session)
+        self.provider = ProviderRepository(self.session)
+        self.measurement_unit = MeasurementUnitRepository(self.session)
+        self.tariff_type = TariffTypeRepository(self.session)
+        self.tariff = TariffRepository(self.session)
+        self.counter = CounterRepository(self.session)
+        self.counter_reading = CounterReadingRepository(self.session)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        try:
+            self.commit()
+            print('commit')
+        except Exception as e:
+            self.rollback()
+            print(e)
+            print('rollback')
+        finally:
+            self.session.close()
+            print('close')
+
+    def rollback(self):
+        self.session.rollback()
+
+    def commit(self):
+        self.session.commit()
+
+
+if __name__ == '__main__':
+    ...
