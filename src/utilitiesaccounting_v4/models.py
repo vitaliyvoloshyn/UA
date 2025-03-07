@@ -72,13 +72,13 @@ class TariffType(Base):
 class Tariff(Base):
     __tablename__ = 'tariffs'
     # main fields
-    name: Mapped[str] = mapped_column(unique=True)
+    name: Mapped[str]
     value: Mapped[str]
     from_date: Mapped[date]
     to_date: Mapped[date] = mapped_column(nullable=True)
     tariff_type_id: Mapped[int] = mapped_column(ForeignKey('tariff_types.id'))
     provider_id: Mapped[int] = mapped_column(ForeignKey('providers.id'))
     # relationships
-    tariff_type: Mapped['TariffType'] = relationship(back_populates='tariffs', lazy='selectin')
+    tariff_type: Mapped['TariffType'] = relationship(back_populates='tariffs')
     counter: Mapped['Counter'] = relationship(back_populates='tariff')
     provider: Mapped['Provider'] = relationship(back_populates='tariffs')

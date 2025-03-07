@@ -114,6 +114,31 @@ class TestData:
                                                                         repository='provider',
                                                                         name="ДТЕК")
                                                 )
+
+        self.tariff_jan25_sub_schema = TariffAddDTO(name='Абонплата',
+                                                      value='16.32',
+                                                      from_date=datetime.date(2025, 1, 1),
+                                                      to_date=datetime.date(2025, 1, 31),
+                                                      tariff_type_id=self.get_id(service=self.tariff_type_service,
+                                                                                 repository='tariff_type',
+                                                                                 name="Щомісячне нарахування"),
+                                                      provider_id=self.get_id(service=self.provider_service,
+                                                                              repository='provider',
+                                                                              name="ДТЕК")
+                                                      )
+
+        self.tariff_feb25_sub_schema = TariffAddDTO(name='Абонплата',
+                                                    value='18.67',
+                                                    from_date=datetime.date(2025, 2, 1),
+                                                    to_date=None,
+                                                    tariff_type_id=self.get_id(service=self.tariff_type_service,
+                                                                               repository='tariff_type',
+                                                                               name="Щомісячне нарахування"),
+                                                    provider_id=self.get_id(service=self.provider_service,
+                                                                            repository='provider',
+                                                                            name="ДТЕК")
+                                                    )
+
         self.add_record(service=self.tariff_service,
                         repository='tariff',
                         schema=self.tariff_jan25_schema)
@@ -123,6 +148,14 @@ class TestData:
         self.add_record(service=self.tariff_service,
                         repository='tariff',
                         schema=self.tariff_jan25_night_schema)
+
+        self.add_record(service=self.tariff_service,
+                        repository='tariff',
+                        schema=self.tariff_jan25_sub_schema)
+
+        self.add_record(service=self.tariff_service,
+                        repository='tariff',
+                        schema=self.tariff_feb25_sub_schema)
 
         # COUNTERS
         self.counter_electric_schema = CounterAddDTO(name="Лічильник електроенергії",

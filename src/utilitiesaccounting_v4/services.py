@@ -2,12 +2,14 @@ from abc import ABC, abstractmethod
 from typing import List, TypeVar
 
 from src.utilitiesaccounting_v4.repository import SqlRepository
+from src.utilitiesaccounting_v4.tariff_manager import TariffManager
 from src.utilitiesaccounting_v4.uow import UnitOfWork
 
 REPO = TypeVar('REPO', bound=SqlRepository)
+T = TypeVar("T", bound=TariffManager)
 
 
-class BaseService(ABC):
+class BaseService[T](ABC):
     tariff_managers: List = []
 
     def __init__(self):
@@ -16,6 +18,9 @@ class BaseService(ABC):
     @abstractmethod
     def calc(self):
         ...
+
+    def add_tariff_manager(self, tm: T):
+        self.tariff_managers.append(tm)
 
 
 class CategoryService(BaseService):
@@ -31,6 +36,7 @@ class MeasurementUnitService(BaseService):
 class TariffTypeService(BaseService):
     def calc(self):
         ...
+
 
 class TariffService(BaseService):
     def calc(self):
@@ -48,6 +54,11 @@ class CounterService(BaseService):
 
 
 class CounterReadingService(BaseService):
+    def calc(self):
+        ...
+
+
+class ElectricService[T](BaseService):
     def calc(self):
         ...
 

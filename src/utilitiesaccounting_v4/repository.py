@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import TypeVar, Type, List, Sequence
 
 from pydantic import BaseModel
-from sqlalchemy import select, update, delete, Row
+from sqlalchemy import select, update, delete, Row, and_
 from sqlalchemy.orm import Session
 
 from src.utilitiesaccounting_v4.models import Base, Category, Provider, MeasurementUnit, Counter, CounterReading, \
@@ -77,7 +77,7 @@ class SqlRepository(RepositoryBase):
         sql = schema.model_dump()
         return self.model(**sql)
 
-    def _convert_sql_to_schema(self, sql: Sequence[Row], relation: bool = False) -> List[SchemaModel]:
+    def _convert_sql_to_schema(self, sql: Sequence[SQLModel], relation: bool = False) -> List[SchemaModel]:
         """Конвертирует SQL-модель в схему. Возвращает список схем"""
         dto: SchemaModel = self.dto
         if relation:
@@ -130,3 +130,14 @@ class TariffRepository(SqlRepository):
     dto = TariffDTO
     dto_add = TariffAddDTO
     dto_rel = TariffRelDTO
+
+    def spec_get(self, category_name: str, tariff_type: int):
+        query = (select(Tariff)
+                 .join(Provider)
+                 .join(Category)
+                 .join(TariffType)
+                 .where(and_(Category.name == category_name, TariffType.id == tariff_type))
+                 .order_by(Tariff.from_date))
+        res = self.session.execute(query).scalars().all()
+        res = self._convert_sql_to_schema(res, relation=False)
+        return res

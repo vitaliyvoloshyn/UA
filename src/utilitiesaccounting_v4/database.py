@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 
 from src.utilitiesaccounting_v4.models import Base
 
-engine = create_engine("sqlite:///ua.db", echo=False)
+engine = create_engine("sqlite:///ua.db", echo=True)
 db_session_maker = sessionmaker(engine)
 
 
