@@ -14,6 +14,7 @@ class TariffAddDTO(BaseModel):
     to_date: Optional[date] = None
     tariff_type_id: int
     provider_id: int
+    counter_id: Optional[int] = None
 
 
 class TariffDTO(TariffAddDTO):

@@ -9,7 +9,6 @@ from src.utilitiesaccounting_v4.schemas.measurement_unit_dto import MeasurementU
 class CounterAddDTO(BaseModel):
     name: str
     measurement_unit_id: int
-    tariff_id: int
 
 
 class CounterDTO(CounterAddDTO):
