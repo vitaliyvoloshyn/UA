@@ -23,7 +23,6 @@ from src.utilitiesaccounting_v4.schemas.provider_dto import ProviderAddDTO
 from src.utilitiesaccounting_v4.schemas.tariff_dto import TariffAddDTO
 from src.utilitiesaccounting_v4.schemas.tariff_type_dto import TariffTypeAddDTO
 
-
 T = TypeVar("T", bound=BaseService)
 S = TypeVar("S", bound=Base)
 B = TypeVar("B", bound=BaseModel)
@@ -81,6 +80,36 @@ class TestData:
         self.provider_electric = self.add_record(service=self.provider_service,
                                                  repository='provider',
                                                  schema=self.provider_electric_schema)
+        # COUNTERS
+        self.counter_electric_schema = CounterAddDTO(
+            name="Лічильник електроенергії",
+            measurement_unit_id=self.get_id(
+                service=self.measurement_unit_service,
+                repository='measurement_unit',
+                value="кВт*год")
+        )
+
+        self.counter_electric_day_schema = CounterAddDTO(name="Лічильник електроенергії денний тариф",
+                                                         measurement_unit_id=self.get_id(
+                                                             service=self.measurement_unit_service,
+                                                             repository='measurement_unit',
+                                                             value="кВт*год"),
+                                                         )
+        self.counter_electric_night_schema = CounterAddDTO(name="Лічильник електроенергії нічний тариф",
+                                                           measurement_unit_id=self.get_id(
+                                                               service=self.measurement_unit_service,
+                                                               repository='measurement_unit',
+                                                               value="кВт*год"),
+                                                           )
+        self.counter_electric = self.add_record(service=self.counter_service,
+                                                repository='counter',
+                                                schema=self.counter_electric_schema)
+        self.counter_electric_day = self.add_record(service=self.counter_service,
+                                                    repository='counter',
+                                                    schema=self.counter_electric_day_schema)
+        self.counter_electric_night = self.add_record(service=self.counter_service,
+                                                      repository='counter',
+                                                      schema=self.counter_electric_night_schema)
 
         # TARIFFS
         self.tariff_jan25_schema = TariffAddDTO(name='Однозонний тариф',
@@ -91,41 +120,52 @@ class TestData:
                                                                            repository='tariff_type',
                                                                            name="За спожитий об'єм"),
                                                 provider_id=self.get_id(service=self.provider_service,
-                                                                       repository='provider',
-                                                                       name="ДТЕК"))
-        self.tariff_jan25_day_schema = TariffAddDTO(name='Денний тариф',
-                                                value='4.32',
-                                                from_date=datetime.date(2024, 11, 1),
-                                                to_date=None,
-                                                tariff_type_id=self.get_id(service=self.tariff_type_service,
-                                                                           repository='tariff_type',
-                                                                           name="За спожитий об'єм"),
-                                                provider_id=self.get_id(service=self.provider_service,
                                                                         repository='provider',
-                                                                        name="ДТЕК"))
-        self.tariff_jan25_night_schema = TariffAddDTO(name='Нічний тариф',
-                                                value='4.32',
-                                                from_date=datetime.date(2024, 11, 1),
-                                                to_date=None,
-                                                tariff_type_id=self.get_id(service=self.tariff_type_service,
-                                                                           repository='tariff_type',
-                                                                           name="За спожитий об'єм"),
-                                                provider_id=self.get_id(service=self.provider_service,
-                                                                        repository='provider',
-                                                                        name="ДТЕК")
+                                                                        name="ДТЕК"),
+                                                counter_id=self.get_id(service=self.counter_service,
+                                                                           repository='counter',
+                                                                           name="Лічильник електроенергії")
                                                 )
-
-        self.tariff_jan25_sub_schema = TariffAddDTO(name='Абонплата',
-                                                      value='16.32',
-                                                      from_date=datetime.date(2025, 1, 1),
-                                                      to_date=datetime.date(2025, 1, 31),
+        self.tariff_jan25_day_schema = TariffAddDTO(name='Денний тариф',
+                                                    value='4.32',
+                                                    from_date=datetime.date(2024, 11, 1),
+                                                    to_date=None,
+                                                    tariff_type_id=self.get_id(service=self.tariff_type_service,
+                                                                               repository='tariff_type',
+                                                                               name="За спожитий об'єм"),
+                                                    provider_id=self.get_id(service=self.provider_service,
+                                                                            repository='provider',
+                                                                            name="ДТЕК"),
+                                                    counter_id=self.get_id(service=self.counter_service,
+                                                                           repository='counter',
+                                                                           name="Лічильник електроенергії денний тариф")
+                                                    )
+        self.tariff_jan25_night_schema = TariffAddDTO(name='Нічний тариф',
+                                                      value='4.32',
+                                                      from_date=datetime.date(2024, 11, 1),
+                                                      to_date=None,
                                                       tariff_type_id=self.get_id(service=self.tariff_type_service,
                                                                                  repository='tariff_type',
-                                                                                 name="Щомісячне нарахування"),
+                                                                                 name="За спожитий об'єм"),
                                                       provider_id=self.get_id(service=self.provider_service,
                                                                               repository='provider',
-                                                                              name="ДТЕК")
+                                                                              name="ДТЕК"),
+                                                      counter_id=self.get_id(service=self.counter_service,
+                                                                             repository='counter',
+                                                                             name="Лічильник електроенергії нічний тариф")
                                                       )
+
+        self.tariff_jan25_sub_schema = TariffAddDTO(name='Абонплата',
+                                                    value='16.32',
+                                                    from_date=datetime.date(2025, 1, 1),
+                                                    to_date=datetime.date(2025, 1, 31),
+                                                    tariff_type_id=self.get_id(service=self.tariff_type_service,
+                                                                               repository='tariff_type',
+                                                                               name="Щомісячне нарахування"),
+                                                    provider_id=self.get_id(service=self.provider_service,
+                                                                            repository='provider',
+                                                                            name="ДТЕК")
+                                                    )
 
         self.tariff_feb25_sub_schema = TariffAddDTO(name='Абонплата',
                                                     value='18.67',
@@ -157,44 +197,6 @@ class TestData:
                         repository='tariff',
                         schema=self.tariff_feb25_sub_schema)
 
-        # COUNTERS
-        self.counter_electric_schema = CounterAddDTO(name="Лічильник електроенергії",
-                                                     measurement_unit_id=self.get_id(
-                                                         service=self.measurement_unit_service,
-                                                         repository='measurement_unit',
-                                                         value="кВт*год"),
-                                                     tariff_id=self.get_id(
-                                                         service=self.tariff_service,
-                                                         repository='tariff',
-                                                         name='Однозонний тариф'))
-        self.counter_electric_day_schema = CounterAddDTO(name="Лічильник електроенергії денний тариф",
-                                                         measurement_unit_id=self.get_id(
-                                                             service=self.measurement_unit_service,
-                                                             repository='measurement_unit',
-                                                             value="кВт*год"),
-                                                         tariff_id=self.get_id(
-                                                             service=self.tariff_service,
-                                                             repository='tariff',
-                                                             name='Денний тариф'))
-        self.counter_electric_night_schema = CounterAddDTO(name="Лічильник електроенергії нічний тариф",
-                                                           measurement_unit_id=self.get_id(
-                                                               service=self.measurement_unit_service,
-                                                               repository='measurement_unit',
-                                                               value="кВт*год"),
-                                                           tariff_id=self.get_id(
-                                                               service=self.tariff_service,
-                                                               repository='tariff',
-                                                               name='Нічний тариф'))
-        self.counter_electric = self.add_record(service=self.counter_service,
-                                                repository='counter',
-                                                schema=self.counter_electric_schema)
-        self.counter_electric_day = self.add_record(service=self.counter_service,
-                                                    repository='counter',
-                                                    schema=self.counter_electric_day_schema)
-        self.counter_electric_night = self.add_record(service=self.counter_service,
-                                                      repository='counter',
-                                                      schema=self.counter_electric_night_schema)
-
         # COUNTER READINGS
         self.counter_reading_jan25_schema = CounterReadingAddDTO(name="Споживання",
                                                                  value=7280,
@@ -225,7 +227,6 @@ class TestData:
         self.counter_reading_feb25_night = self.add_record(service=self.counter_reading_service,
                                                            repository='counter_reading',
                                                            schema=self.counter_reading_feb25_night_schema)
-
 
     def add_record(self, service: T, repository: str, schema: B) -> S:
         with service.storage_manager() as sm:
