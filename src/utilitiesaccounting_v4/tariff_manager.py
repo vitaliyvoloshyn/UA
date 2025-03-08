@@ -1,4 +1,3 @@
-import decimal
 from abc import ABC, abstractmethod
 from datetime import datetime, date
 from decimal import Decimal
@@ -21,13 +20,13 @@ class SubscriptionTariffManager[T](TariffManager):
         start_date: datetime.date = schema[0].from_date
         inc_date: date = start_date
         today = date.today()
-        sum_: int = 0
+        sum_: Decimal = Decimal('0')
         while inc_date < today:
             for tariff in schema:
                 if not tariff.to_date:
                     tariff.to_date = date(datetime.today().year, datetime.today().month, datetime.today().day)
                 if tariff.from_date <= inc_date < tariff.to_date and inc_date.month != today.month:
-                    sum_ += decimal.Decimal(tariff.value)
+                    sum_ += Decimal(str(tariff.value))
             inc_date += relativedelta(months=1)
         print("sum_: ", sum_)
         return sum_
@@ -48,3 +47,9 @@ class ConsumptionVolumeTariffManager[T](TariffManager):
                             diff = cr.value - tariff.counter.counter_readings[index - 1].value
                             sum_ += Decimal(str(diff)) * Decimal(str(tariff.value))
         return sum_
+
+
+class OnTimeChargeTariffManager[T](TariffManager):
+    def calculate(self, tariffs: List[T]):
+        sum_: Decimal = Decimal('0')
+        return sum((Decimal(str(tariff.value)) for tariff in tariffs))
