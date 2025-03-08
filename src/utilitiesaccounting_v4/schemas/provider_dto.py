@@ -1,8 +1,7 @@
-from typing import List, Optional
+from typing import List
 
 from pydantic import BaseModel
 
-from src.utilitiesaccounting_v4.schemas.category_dto import CategoryDTO
 from src.utilitiesaccounting_v4.schemas.tariff_dto import TariffDTO
 
 
@@ -16,5 +15,4 @@ class ProviderDTO(ProviderAddDTO):
 
 
 class ProviderRelDTO(ProviderDTO):
-    category: 'CategoryDTO'
     tariffs: List['TariffDTO']

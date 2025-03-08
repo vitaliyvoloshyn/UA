@@ -9,5 +9,6 @@ class CounterReadingAddDTO(BaseModel):
     enter_date: date
     counter_id: int
 
+
 class CounterReadingDTO(CounterReadingAddDTO):
     id: int

@@ -1,5 +1,5 @@
 from datetime import date
-from typing import List, Optional
+from typing import List
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -47,7 +47,7 @@ class Counter(Base):
     # relationships
     measurement_unit: Mapped['MeasurementUnit'] = relationship(back_populates='counters', lazy='selectin')
     counter_readings: Mapped[List['CounterReading']] = relationship(back_populates='counter', lazy='selectin')
-    tariffs: Mapped[List['Tariff']] = relationship(back_populates='counter')
+    tariffs: Mapped[List['Tariff']] = relationship(back_populates='counter', lazy='selectin')
 
 
 class Provider(Base):
@@ -80,5 +80,5 @@ class Tariff(Base):
     counter_id: Mapped[int] = mapped_column(ForeignKey('counters.id'), nullable=True)
     # relationships
     tariff_type: Mapped['TariffType'] = relationship(back_populates='tariffs')
-    counter: Mapped['Counter'] = relationship(back_populates='tariffs')
+    counter: Mapped['Counter'] = relationship(back_populates='tariffs', lazy='selectin')
     provider: Mapped['Provider'] = relationship(back_populates='tariffs')

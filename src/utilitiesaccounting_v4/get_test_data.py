@@ -2,7 +2,6 @@ import logging
 
 from src.utilitiesaccounting_v4.services import (CategoryService,
                                                  CounterService,
-                                                 CounterReadingService,
                                                  TariffService,
                                                  ProviderService,
                                                  ElectricService)
@@ -36,7 +35,14 @@ def get_counters():
 
 def get_tariffs_on_category(category_name: str, tariff_type: int):
     with TariffService().storage_manager() as sm:
-        res = sm.tariff.spec_get(category_name, tariff_type)
+        res = sm.tariff.get_subscription_tariffs(category_name, tariff_type)
+        log.debug(res)
+        return res
+
+
+def get_consumption_tariffs_on_category(category_name: str, tariff_type: int):
+    with TariffService().storage_manager() as sm:
+        res = sm.tariff.get_consumption_tariffs(category_name, tariff_type)
         log.debug(res)
         return res
 

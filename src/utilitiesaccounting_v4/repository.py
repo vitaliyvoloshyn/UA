@@ -54,6 +54,10 @@ class SqlRepository(RepositoryBase):
         self.session.add(sql)
         return sql
 
+    def add_all(self, records: Sequence[SchemaModel]) -> Sequence[SQLModel]:
+        objects = map(self.add, records)
+        return list(objects)
+
     def remove(self, pk: int):
 
         stmt = delete(self.model).where(self.model.id == pk)
@@ -131,7 +135,7 @@ class TariffRepository(SqlRepository):
     dto_add = TariffAddDTO
     dto_rel = TariffRelDTO
 
-    def spec_get(self, category_name: str, tariff_type: int):
+    def get_subscription_tariffs(self, category_name: str, tariff_type: int):
         query = (select(Tariff)
                  .join(Provider)
                  .join(Category)
@@ -140,4 +144,15 @@ class TariffRepository(SqlRepository):
                  .order_by(Tariff.from_date))
         res = self.session.execute(query).scalars().all()
         res = self._convert_sql_to_schema(res, relation=False)
+        return res
+
+    def get_consumption_tariffs(self, category_name: str, tariff_type: int):
+        query = (select(Tariff)
+                 .join(Provider)
+                 .join(Category)
+                 .join(TariffType)
+                 .where(and_(Category.name == category_name, TariffType.id == tariff_type))
+                 .order_by(Tariff.from_date))
+        res = self.session.execute(query).scalars().all()
+        res = self._convert_sql_to_schema(res, relation=True)
         return res
