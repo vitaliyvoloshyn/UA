@@ -23,4 +23,4 @@ class TariffDTO(TariffAddDTO):
 
 class TariffRelDTO(TariffDTO):
     tariff_type: 'TariffTypeDTO'
-    counter: 'CounterRelDTO'
+    counter: Optional['CounterRelDTO'] = None
