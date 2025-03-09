@@ -143,5 +143,5 @@ class TariffRepository(SqlRepository):
                  .where(and_(Category.name == category_name, TariffType.id == tariff_type))
                  .order_by(Tariff.from_date))
         res = self.session.execute(query).scalars().all()
-        res = self._convert_sql_to_schema(res, relation=False)
+        res = self._convert_sql_to_schema(res, relation=True)
         return res
