@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Type, List, Sequence
+from typing import TypeVar, Type, List, Sequence, Optional
 
 from pydantic import BaseModel
-from sqlalchemy import select, update, delete, Row, and_
+from sqlalchemy import select, update, delete, Row, and_, Select
 from sqlalchemy.orm import Session
 
 from src.utilitiesaccounting_v4.models import Base, Category, Provider, MeasurementUnit, Counter, CounterReading, \
@@ -63,8 +63,12 @@ class SqlRepository(RepositoryBase):
         stmt = delete(self.model).where(self.model.id == pk)
         self.session.execute(stmt)
 
-    def get(self, relation: bool = False, convert: bool = True, **filter_) -> List[SchemaModel] | Sequence[Row]:
-        query = select(self.model).filter_by(**filter_)
+    def get(self, relation: bool = False, convert: bool = True, query: Optional[Select] = None, **filter_) -> List[
+                                                                                                                  SchemaModel] | \
+                                                                                                              Sequence[
+                                                                                                                  Row]:
+        if query is None:
+            query = select(self.model).filter_by(**filter_)
         sql_data = self.session.execute(query).scalars().all()
         if not convert:
             return sql_data
@@ -121,6 +125,12 @@ class CounterReadingRepository(SqlRepository):
     model = CounterReading
     dto = CounterReadingDTO
     dto_add = CounterReadingAddDTO
+
+    def get(self, relation: bool = False, convert: bool = True, **filter_) -> List[SchemaModel] | Sequence[Row]:
+        """Группировка по счетчикам с сортировкой по дате внесения показателей"""
+        query = select(self.model).filter_by(**filter_).order_by(self.model.counter_id, self.model.enter_date.asc())
+
+        return super().get(relation, convert, query)
 
 
 class TariffTypeRepository(SqlRepository):
