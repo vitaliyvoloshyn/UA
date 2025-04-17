@@ -2,14 +2,16 @@ from abc import ABC, abstractmethod
 from typing import TypeVar, Type, List, Sequence, Optional
 
 from pydantic import BaseModel
-from sqlalchemy import select, update, delete, Row, and_, Select
+from sqlalchemy import select, update, delete, Row, and_, Select, text, TextClause
 from sqlalchemy.orm import Session
 
 from src.utilitiesaccounting_v4.models import Base, Category, Provider, MeasurementUnit, Counter, CounterReading, \
     TariffType, Tariff
 from src.utilitiesaccounting_v4.schemas.category_dto import CategoryDTO, CategoryAddDTO, CategoryRelDTO
 from src.utilitiesaccounting_v4.schemas.counter_dto import CounterDTO, CounterAddDTO, CounterRelDTO
-from src.utilitiesaccounting_v4.schemas.counter_reading_dto import CounterReadingDTO, CounterReadingAddDTO
+from src.utilitiesaccounting_v4.schemas.counter_reading_dto import CounterReadingDTO, CounterReadingAddDTO, \
+    CounterReadingRelDTO
+from src.utilitiesaccounting_v4.schemas.logger import logger
 from src.utilitiesaccounting_v4.schemas.measurement_unit_dto import MeasurementUnitDTO, MeasurementUnitAddDTO
 from src.utilitiesaccounting_v4.schemas.provider_dto import ProviderDTO, ProviderAddDTO, ProviderRelDTO
 from src.utilitiesaccounting_v4.schemas.tariff_dto import TariffRelDTO, TariffAddDTO, TariffDTO
@@ -50,32 +52,34 @@ class SqlRepository(RepositoryBase):
         super().__init__(session)
 
     def add(self, record: SchemaModel) -> SQLModel:
+        logger.debug(f'Запрос в БД -> добавление одной записи')
         sql = self._convert_schema_to_sql(record)
         self.session.add(sql)
         return sql
 
     def add_all(self, records: Sequence[SchemaModel]) -> Sequence[SQLModel]:
+        logger.debug(f'Запрос в БД -> добавление нескольких записей')
         objects = map(self.add, records)
         return list(objects)
 
     def remove(self, pk: int):
-
+        logger.debug(f'Запрос в БД -> удаление данных')
         stmt = delete(self.model).where(self.model.id == pk)
         self.session.execute(stmt)
 
-    def get(self, relation: bool = False, convert: bool = True, query: Optional[Select] = None, **filter_) -> List[
-                                                                                                                  SchemaModel] | \
-                                                                                                              Sequence[
-                                                                                                                  Row]:
+    def get(self, relation: bool = False, convert: bool = True, query: Optional[Select | TextClause] = None,
+            **filter_) -> List[SchemaModel] | Sequence[Row]:
         if query is None:
             query = select(self.model).filter_by(**filter_)
         sql_data = self.session.execute(query).scalars().all()
+        logger.debug(f'Запрос в БД -> выборка данных')
         if not convert:
             return sql_data
         schemas = self._convert_sql_to_schema(sql_data, relation)
         return schemas
 
     def update(self, pk: int, **data) -> Sequence[Row]:
+        logger.debug(f'Запрос в БД -> обновление данных')
         stmt = update(self.model).where(self.model.id == pk).values(**data).returning(self.model)
         res = self.session.execute(stmt).scalars().all()
         return res
@@ -120,16 +124,25 @@ class CounterRepository(SqlRepository):
     dto_add = CounterAddDTO
     dto_rel = CounterRelDTO
 
+    # def get(self, relation: bool = False, convert: bool = True, **filter_) -> List[SchemaModel] | Sequence[Row]:
+    #     """С сортировкой по дате внесения показателей"""
+    #     query = select(self.model).outerjoin(CounterReading).filter_by(**filter_).group_by(self.model.name)
+    #     # query = select(text("* FROM counters c join counter_readings cr on c.id = cr.counter_id ORDER BY cr.enter_date;"))
+    #
+    #     return super().get(relation, convert, query)
+
 
 class CounterReadingRepository(SqlRepository):
     model = CounterReading
     dto = CounterReadingDTO
     dto_add = CounterReadingAddDTO
+    dto_rel = CounterReadingRelDTO
 
     def get(self, relation: bool = False, convert: bool = True, **filter_) -> List[SchemaModel] | Sequence[Row]:
         """Группировка по счетчикам с сортировкой по дате внесения показателей"""
         query = select(self.model).filter_by(**filter_).order_by(self.model.counter_id, self.model.enter_date.asc())
-
+        query = select(CounterReading).filter_by(**filter_).order_by(CounterReading.counter_id,
+                                                                     CounterReading.enter_date)
         return super().get(relation, convert, query)
 
 

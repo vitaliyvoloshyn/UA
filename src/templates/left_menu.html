@@ -1,0 +1,55 @@
+<div class="container-fluid mimin-wrapper">
+    <!-- start:Left Menu -->
+    <div id="left-menu">
+        <div class="sub-left-menu scroll">
+            <ul class="nav nav-list">
+                <li>
+                    <div class="left-bg"></div>
+                </li>
+                <li class="time">
+                    <div class="animated fadeInLeft" id="curr_time" style="font-size: 4em; margin-bottom: 0.5em">--:--</div>
+                    <p class="animated fadeInRight" id="curr_date" style="font-size: 1.2em;">-, - - -</p>
+                </li>
+                {% include 'nav_menu.html' %}
+            </ul>
+        </div>
+    </div>
+    <!-- end: Left Menu -->
+</div>
+
+<!-- plugins -->
+<script type="text/javascript">
+    function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function checkZero(val) {
+	if (val < 10){
+		return '0' + val}
+	return val;
+};
+
+async function setPageTime() {
+var currentDateObj = document.getElementById('curr_date');
+var currentTimeObj = document.getElementById('curr_time');
+var monthList = new Array('Січня', 'Лютого', 'Березня', 'Квітня', 'Травня', 'Червня', 'Липня',
+        'Серпня', 'Вересня', 'Жовтня', 'Листопада', 'Грудня');
+var dayList = new Array("Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота", "Неділя");
+while (true) {
+	var currDate = new Date();
+	var currTime = checkZero(currDate.getHours()) + ':' + checkZero(currDate.getMinutes()) + ':' + checkZero(currDate.getSeconds())
+    	var m = monthList[currDate.getMonth()];
+	var d = checkZero(currDate.getDate());
+	var d_str = dayList[currDate.getDay()];
+	var y = currDate.getFullYear();
+	var str = d_str + ', ' + d + ' ' + m + ' ' + y;
+
+    currentTimeObj.innerHTML=currTime;
+    currentDateObj.innerHTML=str;
+	await sleep(1000);
+};
+
+}
+
+    setPageTime();
+</script>
