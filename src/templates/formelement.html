@@ -95,7 +95,6 @@
 <script type="text/javascript">
     for (let index = 1; index <= {{counters|count}}; ++index) {
         let s = `readings_date_${index}`;
-        console.log(s);
         var d = document.getElementById(s);
         d.valueAsDate = new Date();
     };

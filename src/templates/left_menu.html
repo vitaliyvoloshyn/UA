@@ -7,7 +7,7 @@
                     <div class="left-bg"></div>
                 </li>
                 <li class="time">
-                    <div class="animated fadeInLeft" id="curr_time" style="font-size: 4em; margin-bottom: 0.5em">--:--</div>
+                    <div class="animated fadeInLeft" id="curr_time" style="font-size: 4em; margin-bottom: 0.5em; text-align: center;" >--:--</div>
                     <p class="animated fadeInRight" id="curr_date" style="font-size: 1.2em;">-, - - -</p>
                 </li>
                 {% include 'nav_menu.html' %}
@@ -35,9 +35,15 @@ var currentTimeObj = document.getElementById('curr_time');
 var monthList = new Array('Січня', 'Лютого', 'Березня', 'Квітня', 'Травня', 'Червня', 'Липня',
         'Серпня', 'Вересня', 'Жовтня', 'Листопада', 'Грудня');
 var dayList = new Array("Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота", "Неділя");
-while (true) {
-	var currDate = new Date();
-	var currTime = checkZero(currDate.getHours()) + ':' + checkZero(currDate.getMinutes()) + ':' + checkZero(currDate.getSeconds())
+var curr_minute = checkZero(new Date().getMinutes());
+var next_minute = curr_minute;
+var currDate;
+var currTime;
+
+while (curr_minute == next_minute) {
+	currDate = new Date();
+	next_minute = checkZero(currDate.getMinutes())
+	currTime = checkZero(currDate.getHours()) + ':' + next_minute
     	var m = monthList[currDate.getMonth()];
 	var d = checkZero(currDate.getDate());
 	var d_str = dayList[currDate.getDay()];
@@ -47,6 +53,21 @@ while (true) {
     currentTimeObj.innerHTML=currTime;
     currentDateObj.innerHTML=str;
 	await sleep(1000);
+};
+
+while (true) {
+	currDate = new Date();
+	currTime = checkZero(currDate.getHours()) + ':' + checkZero(currDate.getMinutes())
+    	var m = monthList[currDate.getMonth()];
+	var d = checkZero(currDate.getDate());
+	var d_str = dayList[currDate.getDay()];
+	var y = currDate.getFullYear();
+	var str = d_str + ', ' + d + ' ' + m + ' ' + y;
+
+    currentTimeObj.innerHTML=currTime;
+    currentDateObj.innerHTML=str;
+	await sleep(60000);
+
 };
 
 }
