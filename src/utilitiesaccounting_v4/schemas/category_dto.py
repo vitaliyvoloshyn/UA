@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from src.utilitiesaccounting_v4.schemas.provider_dto import ProviderDTO
+from src.utilitiesaccounting_v4.schemas.provider_dto import ProviderRelDTO
 
 
 class CategoryAddDTO(BaseModel):
@@ -12,4 +12,4 @@ class CategoryDTO(CategoryAddDTO):
 
 
 class CategoryRelDTO(CategoryDTO):
-    provider: 'ProviderDTO'
+    provider: 'ProviderRelDTO'

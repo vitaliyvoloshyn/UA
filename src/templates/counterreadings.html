@@ -9,7 +9,7 @@
     <div class="panel box-shadow-none content-header">
         <div class="panel-body">
             <div class="col-md-12">
-                <h3 class="animated fadeInLeft">Внесення нових показників</h3>
+                <h3 class="animated fadeInLeft">Історія показників</h3>
                 <p class="animated fadeInDown">
                     Form <span class="fa-angle-right fa"></span> Form Element
                 </p>
@@ -18,63 +18,47 @@
     </div>
     <div class="form-element">
         <div class="col-md-12 padding-0">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="panel form-element-padding">
                     <div class="panel-heading">
                         <h4>Список лічильників</h4>
                     </div>
                     <div class="panel-body" style="padding-bottom:30px;">
-                        {% for counter in counters %}
-                        {% if counter.is_active %}
-                        <div class="col-md-12">
-                            <h4>{{counter.name}}</h4>
-                            <div class="form-group"><label class="col-sm-3 control-label text-right">Попередні
-                                показники</label>
-                                <div class="col-sm-4">
-                                    <input
-                                            type="text"
-                                            class="form-control"
-                                            value="{%if counter.counter_readings|count > 0 %}{{counter.counter_readings[-1].value}} ({{counter.counter_readings[-1].enter_date}}) {{counter.measurement_unit.value}}{%endif%}"
-                                            disabled>
-                                </div>
-                            </div>
-                            <div class="form-group"><label class="col-sm-3 control-label text-right">Нові
-                                показники</label>
-                                <div class="col-sm-4"><input type="number" class="form-control"
-                                                             id="readings_value_{{counter.id}}">
-                                </div>
-                            </div>
-                            <div class="form-group"><label class="col-sm-3 control-label text-right">Дата</label>
-                                <div class="col-sm-4"><input type="date" class="form-control"
-                                                             id="readings_date_{{counter.id}}">
-                                </div>
-                            </div>
-                            <div style="padding-top: 0.5%">
-                                <hr style="border: 1px solid">
+
+                        <div class="col-md-4">
+                            <div class="list-group">
+                                {% for counter in counters %}
+                                    <a href="{{url_for('cr_id', counter_id=counter.id)}}" class="list-group-item list-group-item-action list-group-item-primary">{{ counter.name }}
+                                    {% if counter.is_active == false %} (не активний) {% endif %} </a>
+                                {% endfor %}
                             </div>
                         </div>
 
-                        {% endif %}
-                        {% endfor %}
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <font style="vertical-align: inherit;">
-                                    <font style="vertical-align: inherit;"><input type="button"
-                                                                                  class=" btn btn-round btn-primary"
-                                                                                  value="Надіслати показники"
-                                                                                  id="btn_send">
-                                    </font>
-                                </font>
-                            </div>
-
+                        <div class="col-md-6">
+                            <table class="table table-bordered border-primary">
+                              <thead>
+                                <tr>
+                                  <th scope="col">Показники</th>
+                                  <th scope="col">Дата внесення</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% if counter %}
+                                    {% for cr in counter.counter_readings[::-1] %}
+                                <tr>
+                                  <td>{{ cr.value }}</td>
+                                  <td>{{ cr.enter_date }}</td>
+                                </tr>
+                                    {% endfor %}
+                                {% endif %}
+                              </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-    {{counters}}
     <!-- end: content -->
 </div>
 

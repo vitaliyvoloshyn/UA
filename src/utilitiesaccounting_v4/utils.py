@@ -1,9 +1,11 @@
 from datetime import date
+from decimal import Decimal
 from typing import List
 
 from loguru import logger
 
 from src.utilitiesaccounting_v4.schemas.counter_reading_dto import CounterReadingAddDTO
+from src.utilitiesaccounting_v4.schemas.payment_dto import PaymentAddDTO
 from src.utilitiesaccounting_v4.uow import UnitOfWork
 
 
@@ -42,3 +44,20 @@ def validate_counter_readings(records: List[CounterReadingAddDTO]) -> bool:
     """
     for rec in records:
         validate_data(rec.counter_id, rec.value, rec.enter_date)
+
+
+def validate_payments(payments: List[PaymentAddDTO]) -> List[PaymentAddDTO]:
+    """Валідує дані по оплаті
+        - прибирає зі списку всі оплати, які менші або дорівнюють 0
+    """
+    block = Decimal('0')
+    res_list = []
+    for index, value in enumerate(payments):
+        if Decimal(payments[index].value) > block:
+            res_list.append(payments[index])
+    if not res_list:
+        raise ValueError('Перевірте внесені значення по оплаті')
+    return res_list
+
+
+

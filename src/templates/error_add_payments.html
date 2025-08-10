@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<!-- start: Content -->
+<div id="content">
+    <div class="panel box-shadow-none content-header">
+        <div class="panel-body">
+            <div class="col-md-12">
+                <h3 class="animated fadeInLeft">Сплата рахунків</h3>
+                <p class="animated fadeInDown">
+                    Form <span class="fa-angle-right fa"></span> Form Element
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="form-element">
+        <div class="col-md-12 padding-0">
+            <div class="col-md-8">
+                <div class="panel form-element-padding">
+                    <div class="panel-heading">
+                        <img src="static/asset/img/404-error-3060993_1280.webp"
+                             alt="Grapefruit slice atop a pile of other slices"
+                             height="200px">
+                        <h4 style="color: red;">ПОМИЛКА!</h4>
+                    </div>
+                    <div class="panel-body" style="padding-bottom:30px;font-size:140%;">
+                        <div>{{message}}</div>
+                        <div>
+                            <a href="{{url_for('add_payments')}}">Повернутися на сторінку сплати рахунків
+                                --></a>
+                        </div>
+                        <div>
+                            <a href="{{url_for('home')}}">Повернутися на головну сторінку --></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

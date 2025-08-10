@@ -9,6 +9,7 @@ from src.utilitiesaccounting_v4.schemas.measurement_unit_dto import MeasurementU
 class CounterAddDTO(BaseModel):
     name: str
     measurement_unit_id: int
+    is_active: bool = True
 
 
 class CounterDTO(CounterAddDTO):

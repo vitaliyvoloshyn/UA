@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+<!-- start: Content -->
+<div id="content">
+    <div class="panel box-shadow-none content-header">
+        <div class="panel-body">
+            <div class="col-md-12">
+                <h3 class="animated fadeInLeft">Оплата спожитих послуг</h3>
+                <p class="animated fadeInDown">
+                    Form <span class="fa-angle-right fa"></span> Form Element
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="form-element">
+        <div class="col-md-12 padding-0">
+            <div class="col-md-8">
+                <div class="panel form-element-padding">
+                    <div class="panel-heading">
+                        <h4>Список категорій</h4>
+                    </div>
+                    <div class="panel-body" style="padding-bottom:30px;">
+                        {% for category in categories %}
+
+                        <div class="col-md-12">
+                            <h4>{{category.category_name}}</h4>
+                            <div class="form-group"><label class="col-sm-3 control-label text-right">Нараховано
+                                </label>
+                                <div class="col-sm-4">
+                                    <input
+                                            type="text"
+                                            class="form-control"
+                                            value="{{ category.total_debt }}"
+                                            disabled>
+                                </div>
+                            </div>
+                            <div class="form-group"><label class="col-sm-3 control-label text-right">Сплачую</label>
+                                <div class="col-sm-4"><input type="number" class="form-control"
+                                                             id="pay_value_{{category.provider_id}}"
+                                                             value="{{ category.total_debt }}">
+                                </div>
+                            </div>
+                            <div class="form-group"><label class="col-sm-3 control-label text-right">Дата</label>
+                                <div class="col-sm-4"><input type="date" class="form-control"
+                                                             id="pay_date_{{category.provider_id}}">
+                                </div>
+                            </div>
+                            <div style="padding-top: 0.5%">
+                                <hr style="border: 1px solid">
+                            </div>
+                        </div>
+
+
+                        {% endfor %}
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;"><input type="button"
+                                                                                  class=" btn btn-round btn-primary"
+                                                                                  value="Сплатити"
+                                                                                  id="btn_pay">
+                                    </font>
+                                </font>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% for category in categories %}
+    {{ category }}<br><br>
+    {% endfor %}
+    <!-- end: content -->
+</div>
+
+
+<!-- plugins -->
+<script src="{{ url_for('static', path='/asset/js/plugins/moment.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/jquery.knob.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/ion.rangeSlider.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/bootstrap-material-datetimepicker.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/jquery.nicescroll.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/jquery.mask.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/select2.full.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/nouislider.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/jquery.validate.min.js') }}"></script>
+
+
+<!-- custom -->
+<script src="{{ url_for('static', path='/asset/js/main.js') }}"></script>
+<script type="text/javascript">
+    for (let index = 1; index <= 30; ++index) {
+    try {
+        let s = `pay_date_${index}`;
+        var d = document.getElementById(s);
+        d.valueAsDate = new Date();
+    }
+    catch (error){};
+    };
+
+
+    const btn = document.getElementById('btn_pay');
+    console.log(btn);
+    const url = '{{ url_for('add_payments')}}';
+
+    btn.addEventListener("click", () => {
+    let data = get_data();
+    console.log(data);
+    if (data.length > 0){
+    setFetch(data)
+    }});
+
+
+
+async function setFetch(data) {
+try {
+const response = await fetch(url, {
+                                    method: 'POST', // или 'PUT'
+                                    body: JSON.stringify(data),
+                                    headers: {
+                                      'Content-Type': 'application/json'
+                                    }});
+if (!response.ok) {
+    const message = await response.text();
+    window.location.replace(`{{url_for('error_add_pymnt')}}?message=${message}`)}
+else {
+    window.location.replace('{{url_for('success_add_pymnt')}}')}
+
+;
+} catch (e) {
+console.error(e);
+}
+}
+
+
+
+
+
+function get_data() {
+    let data = []
+    for (let index = 1; index <= 30; ++index) {
+    try {
+        let s = `pay_value_${index}`;
+        let a = `pay_date_${index}`;
+
+        var d = document.getElementById(s);
+        var b = document.getElementById(a);
+
+        console.log(d.value);
+        if (d.value){
+            data.push({
+                value: d.value,
+                date: b.value,
+                provider_id: index});
+        };
+        console.log(data);
+        }
+    catch (error){};
+    }
+    return data
+};
+</script>
+
+<!-- end: Javascript -->
+</body>
+</html>
+{% endblock content %}

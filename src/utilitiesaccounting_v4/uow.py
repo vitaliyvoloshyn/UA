@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 
 from src.utilitiesaccounting_v4.database import db_session_maker
 from src.utilitiesaccounting_v4.repository import SqlRepository, CategoryRepository, ProviderRepository, \
-    MeasurementUnitRepository, TariffTypeRepository, CounterRepository, CounterReadingRepository, TariffRepository
+    MeasurementUnitRepository, TariffTypeRepository, CounterRepository, CounterReadingRepository, TariffRepository, \
+    PaymentRepository
 
 REPO = TypeVar('REPO', bound=SqlRepository)
 
@@ -29,6 +30,7 @@ class UnitOfWork[REPO]:
         self.tariff = TariffRepository(self.session)
         self.counter = CounterRepository(self.session)
         self.counter_reading = CounterReadingRepository(self.session)
+        self.payment = PaymentRepository(self.session)
 
     def __enter__(self):
         return self
