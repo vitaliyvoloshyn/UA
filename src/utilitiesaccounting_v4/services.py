@@ -133,7 +133,7 @@ class POZService[T](BaseService):
     ]
 
 
-class RubishService[T](BaseService):
+class RubbishService[T](BaseService):
     category_name = 'Вивіз сміття'
 
     tariff_managers = [
@@ -167,46 +167,11 @@ class InternetService[T](BaseService):
     ]
 
 
-class CategoryService(BaseService):
-    def calc(self):
-        ...
-
-
-class MeasurementUnitService(BaseService):
-    def calc(self):
-        ...
-
-
-class TariffTypeService(BaseService):
-    def calc(self):
-        ...
-
-
-class TariffService(BaseService):
-    def calc(self):
-        ...
-
-
-class ProviderService(BaseService):
-    def calc(self):
-        ...
-
-
-class CounterService(BaseService):
-    def calc(self):
-        ...
-
-
-class CounterReadingService(BaseService):
-    def calc(self):
-        ...
-
-
 water_service = WaterService()
 electric_service = ElectricService()
 gas_service = GasService()
 poz_service = POZService()
-rubbish_service = RubishService()
+rubbish_service = RubbishService()
 heat_service = HeatService()
 transport_gas_service = TransportGasService()
 internet_service = InternetService()
