@@ -17,75 +17,61 @@
             <div class="panel">
                 <div class="panel-heading"><h3>Список категорій</h3></div>
                 <div class="panel-body">
-                    <div class="responsive-table">
-                        <table id="datatables-example" class="table table-striped table-bordered" width="100%"
-                               cellspacing="0">
-                            <thead>
-                            <tr>
-                                <th>Категорія</th>
-                                <th>Поточні тарифи</th>
-                                <th>Останні показники</th>
-                                <th>Поточні показники</th>
-                                <th>Спожито</th>
-                                <th>Всього нараховано</th>
-                                <th>Всього сплачено</th>
-                                <th>Сумарна заборгованість</th>
-                            </tr>
-                            </thead>
-                            {% for d in debt%}
-                            <tbody>
-                            <tr>
-                                <td>{{d.category_name}}</td>
-                                <td>{% for tariffs in d.debt %}
-                                        {% for tariff in tariffs.tariffs %}
-                                            {% if tariff.is_active %}
-                                                {{ tariff.tariff_type_name }} ({{tariff.value}} грн)<br>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    {% for tariffs in d.debt %}
-                                        {% for tariff in tariffs.tariffs %}
-                                            {% if tariff.is_active %}
-                                                    {{tariff.prev_readings}}<br>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    {% for tariffs in d.debt %}
-                                        {% for tariff in tariffs.tariffs %}
-                                            {% if tariff.is_active %}
-                                                    {{tariff.cur_readings}}<br>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    {% for tariffs in d.debt %}
-                                        {% for tariff in tariffs.tariffs %}
-                                            {% if tariff.is_active %}
-                                                    {{tariff.diff}}<br>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    {{d.total_accrued}}
-                                </td>
-                                <td>{{d.total_payment}}</td>
-                                <td>{{d.total_debt}}</td>
-                            </tr>
 
-                            </tbody>
-                            {%endfor%}
-                        </table>
+                    {% for d in debt %}
+                    <div class="col-md-12" style="border: 1px solid blue; margin-bottom: 1em">
+                        <div class="col-md-3" style="text-align: center">
+                            <img src="{%if d.category_photo%}{{url_for('static', path=d.category_photo)}}{%else%}#{%endif%}"
+                                 class="img-fluid rounded-start" alt="Електропостачання"
+                                 style="width:100%; margin: 1%;">
+                        </div>
+                        <div class="col-md">
+                            <div class="card-body">
+                                <h3 class="card-title" style="margin:0px">{{ d.category_name }}</h3>
+                                <p class="card-text">Актуальні тарифи:<br>
+                                    {% for tariffs in d.debt %}
+                                    {%for tariff in tariffs%}
+                                    {%for t in tariff%}
+                                    {%for t1 in t%}
+                                    {% if t1.is_active%}
+                                        &nbsp;&nbsp;&nbsp;&nbsp;{{t1.tariff_type_name}}: {{t1.value}}
+                                    {%endif%}
+
+                                    {%endfor%}
+                                    {%endfor%}
+                                    {%endfor%}
+                                    {%endfor%}</p>
+                                <p class="card-text">Поточні показники лічильників:
+                                {% for tariffs in d.debt %}
+                                    {%for tariff in tariffs%}
+                                    {%for t in tariff%}
+                                    {%for t1 in t%}
+                                    {% if t1.is_active%}
+                                    {%if t1.cur_readings%}
+                                        &nbsp;&nbsp;&nbsp;&nbsp;{{t1.cur_readings}}
+                                    {%endif%}
+                                    {%endif%}
+
+                                    {%endfor%}
+                                    {%endfor%}
+                                    {%endfor%}
+                                    {%endfor%}</p>
+                                <h4 class="card-text" style="color: {%if d.total_debt|int <= 0%}green{%else%}red{%endif%}">Заборгованість: {{d.total_debt}}</h4>
+
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+
+                    <div>
+                        <strong style="font-size: 1.5em;">Сумарна заборгованість по всім категоріям складає - {{ total_debt }}</strong>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div>{%for d in debt%}{{d}}<br><br>{%endfor%}</div>
 </div>
 
 

@@ -5,7 +5,9 @@ from typing import List
 from loguru import logger
 
 from src.utilitiesaccounting_v4.schemas.counter_reading_dto import CounterReadingAddDTO
+from src.utilitiesaccounting_v4.schemas.debt_dto import DebtDTO
 from src.utilitiesaccounting_v4.schemas.payment_dto import PaymentAddDTO
+from src.utilitiesaccounting_v4.schemas.tariff_dto import TariffDTO
 from src.utilitiesaccounting_v4.uow import UnitOfWork
 
 
@@ -30,9 +32,7 @@ def validate_data(counter_id: int, value: int, date_: date) -> bool:
         mes = f"""Помилка внесення показників по лічильнику {counter[0].name} - дата внесених показників {date_} менша за дату внесення попередніх показників {cr_last.enter_date}"""
     if mes is None:
         return True
-    logger.error(mes)
     raise ValueError(mes)
-
 
 
 def validate_counter_readings(records: List[CounterReadingAddDTO]) -> bool:
@@ -60,4 +60,30 @@ def validate_payments(payments: List[PaymentAddDTO]) -> List[PaymentAddDTO]:
     return res_list
 
 
+def get_begin_current_month() -> date:
+    return date(year=date.today().year,
+                month=date.today().month,
+                day=1)
 
+
+def get_total_debt_value(debts: List[DebtDTO]):
+    res = Decimal('0')
+    for debt in debts:
+        res += Decimal(debt.total_debt)
+    return res
+
+def remove_inactive_tariffs(tariffs: List[TariffDTO]) -> List[TariffDTO]:
+    """идаляє зі списку тарифів тільки ті тарифи, в яких кінцева дата не порожня"""
+    tariffs_copy = []
+    for tariff in tariffs:
+        if tariff.to_date is None:
+            tariffs_copy.append(tariff)
+    return tariffs_copy
+
+def remove_tariff_type_3_tariffs(tariffs: List[TariffDTO]) -> List[TariffDTO]:
+    """Видаляє зі списку тарифів тільки ті тарифи, в яких tariff_type_id вказано 3 ('Разове нарахування')"""
+    tariffs_copy = []
+    for tariff in tariffs:
+        if tariff.tariff_type_id != 3:
+            tariffs_copy.append(tariff)
+    return tariffs_copy

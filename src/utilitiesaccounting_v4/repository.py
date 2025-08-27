@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
+from datetime import timedelta
 from typing import TypeVar, Type, List, Sequence, Optional
 
 import loguru
 from pydantic import BaseModel
-from sqlalchemy import select, update, delete, Row, and_, Select, text, TextClause, Column
+from sqlalchemy import select, update, delete, Row, and_, Select, TextClause
 from sqlalchemy.orm import Session
 
 from src.utilitiesaccounting_v4.models import Base, Category, Provider, MeasurementUnit, Counter, CounterReading, \
     TariffType, Tariff, Payment
-from src.utilitiesaccounting_v4.schemas.category_cr import CategoryCR
 from src.utilitiesaccounting_v4.schemas.category_dto import CategoryDTO, CategoryAddDTO, CategoryRelDTO
 from src.utilitiesaccounting_v4.schemas.counter_dto import CounterDTO, CounterAddDTO, CounterRelDTO
 from src.utilitiesaccounting_v4.schemas.counter_reading_dto import CounterReadingDTO, CounterReadingAddDTO, \
@@ -86,7 +86,6 @@ class SqlRepository(RepositoryBase):
         stmt = update(self.model).where(self.model.id == pk).values(**data)
         self.session.execute(stmt)
 
-
     def _convert_schema_to_sql(self, schema: SchemaModel) -> SQLModel:
         """Конвертирует схему в SQL-модель"""
         sql = schema.model_dump()
@@ -112,10 +111,13 @@ class CategoryRepository(SqlRepository):
         categories = super().get(relation, convert, **filter_)
 
         """Прибирає зі списку тарифи, в яких кінцева дата не порожня"""
-        for category in categories:
-            for tariff in category.provider.tariffs[::-1]:
-                if tariff.to_date is not None:
-                    category.provider.tariffs.remove(tariff)
+        try:
+            for category in categories:
+                for tariff in category.provider.tariffs[::-1]:
+                    if tariff.to_date is not None:
+                        category.provider.tariffs.remove(tariff)
+        except AttributeError:
+            pass
         return categories
 
     def get_provider_id_by_category_name(self, category_name: str) -> int:
@@ -228,6 +230,27 @@ class TariffRepository(SqlRepository):
         res = self.session.execute(query).scalars().all()
         res = self._convert_sql_to_schema(res, relation=True)
         return res
+
+    def get_tariffs_by_category_id(self, category_id: int):
+        query = (select(self.model)
+                 .join(Provider)
+                 .join(Category)
+                 .where(Category.id == category_id))
+        res = self.session.execute(query).scalars().all()
+        res = self._convert_sql_to_schema(res, relation=True)
+        return res
+
+    def change_tariff(self, new_tariff: TariffAddDTO, old_tariff_id: int):
+        old_tariff = self.get(convert=False, id=old_tariff_id)
+        if old_tariff:
+            old_tariff = old_tariff[0]
+        if old_tariff.to_date is not None:
+            raise ValueError(f'Не можливо змінити тариф. Даний тариф ({old_tariff.name}) позначений як не активний')
+        end_date_old_tariff = new_tariff.from_date - timedelta(days=1)
+        old_tariff.to_date = end_date_old_tariff
+        self.add(new_tariff)
+
+
 
 
 class PaymentRepository(SqlRepository):

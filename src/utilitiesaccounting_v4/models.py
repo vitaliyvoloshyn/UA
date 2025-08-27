@@ -13,6 +13,7 @@ class Category(Base):
     __tablename__ = 'categories'
     # main fields
     name: Mapped[str] = mapped_column(unique=True)
+    photo: Mapped[str] = mapped_column(nullable=True)
     # relationships
     provider: Mapped['Provider'] = relationship(back_populates='category', lazy='selectin')
 

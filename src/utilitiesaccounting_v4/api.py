@@ -6,6 +6,7 @@ from starlette.responses import JSONResponse
 
 from src.utilitiesaccounting_v4.schemas.counter_reading_dto import CounterReadingAddDTO, CounterReadingDTO
 from src.utilitiesaccounting_v4.schemas.payment_dto import PaymentAddDTO, PaymentDTO
+from src.utilitiesaccounting_v4.schemas.result_content import SuccessResultContent, ErrorResultContent
 from src.utilitiesaccounting_v4.schemas.tariff_dto import TariffDTO, TariffAddDTO
 from src.utilitiesaccounting_v4.uow import UnitOfWork
 from src.utilitiesaccounting_v4.utils import validate_counter_readings, validate_payments
@@ -19,15 +20,25 @@ api_router = APIRouter(
 @api_router.post('/add_counterreading', name='add_counterreading')
 def add_counter_reading(records: List[CounterReadingAddDTO]):
     """Пост-запрос на добавление показателей счетчиков"""
+    attrs = {
+        'header': 'Внесення нових показників',
+        'back_ref': 'addcounterreadings',
+        'back_ref_text': 'Повернутися на сторінку внесення показників',
+    }
     try:
         validate_counter_readings(records)
     except ValueError as e:
-        return JSONResponse(content=str(e),
+        attrs['message_operation'] = str(e)
+        res_cont = ErrorResultContent(**attrs)
+        loguru.logger.error(f"Add new counter readings - {e}")
+        return JSONResponse(content=res_cont.model_dump(),
                             status_code=400)
     with UnitOfWork() as uow:
         uow.counter_reading.add_all(records)
+        attrs['message_operation'] = 'Нові показники успішно збережені'
+        res_cont = SuccessResultContent(**attrs)
     loguru.logger.info(f"Added new counter readings")
-    return JSONResponse(content='OK', status_code=200)
+    return JSONResponse(content=res_cont.model_dump(), status_code=200)
 
 
 @api_router.get('/counter_readings', name='crs')
@@ -61,15 +72,24 @@ def del_cr_by_id(pk: int):
 @api_router.post('/payments', name='add_payments')
 def form_add_payments(data: List[PaymentAddDTO]):
     """POST REQUEST ВНЕСЕНИЯ ОПЛАТЫ"""
-    loguru.logger.debug(data)
+    attrs = {
+        'header': 'Сплата рахунків',
+        'back_ref': 'payments',
+        'back_ref_text': 'Повернутися на сторінку сплати рахунків',
+    }
+
     try:
         data = validate_payments(data)
     except ValueError as e:
-        return JSONResponse(content=str(e),
+        attrs['message_operation'] = str(e)
+        res_cont = ErrorResultContent(**attrs)
+        return JSONResponse(content=res_cont.model_dump(),
                             status_code=400)
     with UnitOfWork() as uow:
         uow.payment.add_all(data)
-    return JSONResponse(content='OK', status_code=200)
+        attrs['message_operation'] = 'Рахунки успішно сплачені'
+        res_cont = SuccessResultContent(**attrs)
+    return JSONResponse(content=res_cont.model_dump(), status_code=200)
 
 
 @api_router.get('/payments')
@@ -111,7 +131,7 @@ def get_tariffs() -> List[TariffDTO]:
 
 
 @api_router.get('/tariffs/{item_id}', name='tariff')
-def get_tariff_by_id(item_id: int) -> TariffDTO:
+def get_tariff_by_id(item_id: int):
     with UnitOfWork() as uow:
         tariff = uow.tariff.get(id=item_id)
         if not tariff:
@@ -135,6 +155,47 @@ def update_tariff_by_id(item_id: int, data: TariffAddDTO):
 
 @api_router.post('/tariffs/', name='tariff_add')
 def add_tariff_by_id(data: TariffAddDTO):
+    attrs = {
+        'header': 'Зміна тарифу',
+        'back_ref': 'tariffs',
+        'back_ref_text': 'Повернутися на сторінку перегляду тарифів',
+    }
+    try:
+        with UnitOfWork() as uow:
+            uow.tariff.add(data)
+    except Exception as e:
+        loguru.logger.error(e)
+        attrs['message_operation'] = str(e)
+        res_cont = ErrorResultContent(**attrs)
+        return JSONResponse(content=res_cont.model_dump(),
+                            status_code=400)
+    loguru.logger.info(f'Request for add tariff {data.name}')
+    attrs['message_operation'] = 'Тариф успішно доданий'
+    res_cont = SuccessResultContent(**attrs)
+
+    return JSONResponse(content=res_cont.model_dump(), status_code=200)
+
+
+@api_router.post('/tariffs/{tariff_id}', name='tariff_change')
+def change_tariff(new_tariff: TariffAddDTO, tariff_id: int):
+    """Пост-запит на зміну тарифа"""
+    attrs = {
+        'header': 'Зміна тарифу',
+        'back_ref': 'tariffs',
+        'back_ref_text': 'Повернутися на сторінку перегляду тарифів',
+    }
+
     with UnitOfWork() as uow:
-        uow.tariff.add(data)
-    return JSONResponse(content='OK', status_code=200)
+        try:
+            uow.tariff.change_tariff(new_tariff, tariff_id)
+        except Exception as e:
+            loguru.logger.error(e)
+            attrs['message_operation'] = str(e)
+            res_cont = ErrorResultContent(**attrs)
+            return JSONResponse(content=res_cont.model_dump(),
+                                status_code=400)
+    loguru.logger.info(f'Request for change tariff id = {tariff_id}')
+    attrs['message_operation'] = 'Тариф успішно змінений'
+    res_cont = SuccessResultContent(**attrs)
+
+    return JSONResponse(content=res_cont.model_dump(), status_code=200)

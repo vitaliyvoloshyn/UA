@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+<!-- start: Content -->
+<div id="content">
+    <div class="panel box-shadow-none content-header">
+        <div class="panel-body">
+            <div class="col-md-12">
+                <h3 class="animated fadeInLeft">Додати новий тариф</h3>
+                <p class="animated fadeInDown">
+                    Form <span class="fa-angle-right fa"></span> Form Element
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="form-element">
+        <div class="col-md-12 padding-0">
+            <div class="col-md-8">
+                <div class="panel form-element-padding">
+                    <div class="panel-heading">
+                        <h4>Список категорій</h4>
+                    </div>
+                    <div class="panel-body" style="padding-bottom:30px;">
+
+                        <div class="col-md-12">
+                            <h4></h4>
+                            <div class="form-group"><label class="col-sm-3 control-label text-right">Ім'я нового тарифу
+                            </label>
+                                <div class="col-sm-4">
+                                    <input
+                                            id="name"
+                                            type="text"
+                                            class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group"><label class="col-sm-3 control-label text-right">Значення
+                                тарифу</label>
+                                <div class="col-sm-4"><input type="number" class="form-control"
+                                                             id="value">
+                                </div>
+                            </div>
+                            <div class="form-group"><label class="col-sm-3 control-label text-right">Дата початку
+                                дії</label>
+                                <div class="col-sm-4"><input type="date" class="form-control"
+                                                             id="from_date"
+                                                             >
+                                </div>
+                            </div>
+
+
+                            <div class="form-group"><label class="col-sm-2 control-label text-right">Тип тарифу</label>
+                                <div class="col-sm-10">
+                                    <div class="col-sm-12 padding-0">
+                                        <select class="form-control" id="tariff_type_id">
+                                            <option>Оберіть зі списку тип тарифу...</option>
+                                            {% for tt in tariff_types %}
+                                            <option value="{{tt.id}}">{{tt.name}}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group"><label class="col-sm-2 control-label text-right">Оператор
+                                послуг</label>
+                                <div class="col-sm-10">
+                                    <div class="col-sm-12 padding-0">
+                                        <select class="form-control" id="provider_id">
+                                            <option>Оберіть зі списку оператора...</option>
+                                            {% for provider in providers %}
+                                            <option value="{{provider.id}}">{{provider.name}}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group"><label class="col-sm-2 control-label text-right">Лічильник</label>
+                                <div class="col-sm-10">
+                                    <div class="col-sm-12 padding-0">
+                                        <select class="form-control" id="counter_id">
+                                            <option>Оберіть зі списку лічильник...</option>
+                                            {% for counter in counters %}
+                                            <option value="{{counter.id}}">{{counter.name}}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="padding-top: 0.5%">
+                                <hr style="border: 1px solid">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <font style="vertical-align: inherit;">
+                                    <font style="vertical-align: inherit;"><input type="button"
+                                                                                  class=" btn btn-round btn-primary"
+                                                                                  value="Зберегти"
+                                                                                  id="btn_save">
+                                    </font>
+                                </font>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- end: content -->
+</div>
+
+
+<!-- plugins -->
+<script src="{{ url_for('static', path='/asset/js/plugins/moment.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/jquery.knob.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/ion.rangeSlider.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/bootstrap-material-datetimepicker.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/jquery.nicescroll.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/jquery.mask.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/select2.full.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/nouislider.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/jquery.validate.min.js') }}"></script>
+
+
+<!-- custom -->
+<script src="{{ url_for('static', path='/asset/js/main.js') }}"></script>
+<script type="text/javascript">
+
+    let fd = document.getElementById("from_date");
+    fd.valueAsDate = new Date();
+
+    let tt = document.getElementById("tariff_type_id");
+    let p = document.getElementById("provider_id");
+    let c = document.getElementById("counter_id");
+    let n = document.getElementById("name");
+    let v = document.getElementById("value");
+
+
+    const btn = document.getElementById('btn_save');
+    const url = '{{ url_for('tariff_add')}}';
+
+    btn.addEventListener("click", () => {
+    let data = get_data();
+    setFetch(data);
+    });
+
+
+
+async function setFetch(data) {
+try {
+    const response = await fetch(url, {
+                                    method: 'POST', // или 'PUT'
+                                    body: JSON.stringify(data),
+                                    headers: {
+                                      'Content-Type': 'application/json'
+                                    }});
+
+    const message = await response.text();
+    window.location.replace(`{{url_for('result_operation')}}?message=${message}`)
+
+} catch (e) {
+console.error(e);
+}
+}
+
+
+
+
+
+function get_data() {
+    let data = {}
+    try {
+        const name = n.value;
+        const value = v.value;
+        const from_date = fd.value;
+        const tt_id = tt.value;
+        const p_id = p.value;
+        const c_id = c.value;
+
+        data['name'] = name;
+        data['value'] = value;
+        data['from_date'] = from_date;
+        data['tariff_type_id'] = tt_id;
+        data['provider_id'] = p_id;
+        data['counter_id'] = c_id;
+
+
+    }
+    catch (error){console.log('error in get_data', error)};
+
+    return data
+};
+
+
+
+</script>
+
+<!-- end: Javascript -->
+</body>
+</html>
+{% endblock content %}

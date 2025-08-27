@@ -101,17 +101,15 @@
 
 async function setFetch(data) {
 try {
-const response = await fetch(url, {
+    const response = await fetch(url, {
                                     method: 'POST', // или 'PUT'
                                     body: JSON.stringify(data),
                                     headers: {
                                       'Content-Type': 'application/json'
                                     }});
-if (!response.ok) {
+
     const message = await response.text();
-    window.location.replace(`{{url_for('error_add_cr')}}?message=${message}`)}
-else {
-    window.location.replace('{{url_for('success_add_cr')}}')}
+    window.location.replace(`{{url_for('result_operation')}}?message=${message}`)
 
 ;
 } catch (e) {

@@ -9,7 +9,7 @@
     <div class="panel box-shadow-none content-header">
         <div class="panel-body">
             <div class="col-md-12">
-                <h3 class="animated fadeInLeft">Внесення нових показників</h3>
+                <h3 class="animated fadeInLeft">Список тарифів</h3>
                 <p class="animated fadeInDown">
                     Form <span class="fa-angle-right fa"></span> Form Element
                 </p>
@@ -18,63 +18,80 @@
     </div>
     <div class="form-element">
         <div class="col-md-12 padding-0">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="panel form-element-padding">
                     <div class="panel-heading">
-                        <h4>Список лічильників</h4>
+                        <h4>Список операторів</h4>
+                        <strong>Інформація</strong>
+                        <p>Нижче показані тільки актуальні на сьогоднішній день тарифи<br>
+                            Тут не вказані тарифи з типом "Одноразове нарахування"</p>
                     </div>
                     <div class="panel-body" style="padding-bottom:30px;">
-                        {% for counter in counters %}
-                        {% if counter.is_active %}
-                        <div class="col-md-12">
-                            <h4>{{counter.name}}</h4>
-                            <div class="form-group"><label class="col-sm-3 control-label text-right">Попередні
-                                показники</label>
-                                <div class="col-sm-4">
-                                    <input
-                                            type="text"
-                                            class="form-control"
-                                            value="{%if counter.counter_readings|count > 0 %}{{counter.counter_readings[-1].value}} ({{counter.counter_readings[-1].enter_date}}) {{counter.measurement_unit.value}}{%endif%}"
-                                            disabled>
-                                </div>
-                            </div>
-                            <div class="form-group"><label class="col-sm-3 control-label text-right">Нові
-                                показники</label>
-                                <div class="col-sm-4"><input type="number" class="form-control"
-                                                             id="readings_value_{{counter.id}}">
-                                </div>
-                            </div>
-                            <div class="form-group"><label class="col-sm-3 control-label text-right">Дата</label>
-                                <div class="col-sm-4"><input type="date" class="form-control"
-                                                             id="readings_date_{{counter.id}}">
-                                </div>
-                            </div>
-                            <div style="padding-top: 0.5%">
-                                <hr style="border: 1px solid">
+
+                        <div class="col-md-3">
+                            <div class="list-group">
+                                {% for category in categories %}
+                                <a href="{{url_for('tariffs_id', category_id=category.id)}}"
+                                   class="list-group-item list-group-item-action list-group-item-primary">
+                                    {{ category.name }}
+                                </a>
+                                {% endfor %}
                             </div>
                         </div>
 
-                        {% endif %}
-                        {% endfor %}
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <font style="vertical-align: inherit;">
-                                    <font style="vertical-align: inherit;"><input type="button"
-                                                                                  class=" btn btn-round btn-primary"
-                                                                                  value="Надіслати показники"
-                                                                                  id="btn_send">
-                                    </font>
-                                </font>
+                        <div class="col-md-9">
+                            {% if cur_cat %}
+                            <div class="dropdown">
+                                <button class="btn btn-info dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    Фільтрація списка тарифів
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{{url_for('tariffs_id', category_id=cur_cat.id).include_query_params(is_active='True')}}">Показати тільки активні тарифи</a></li>
+                                    <li><a class="dropdown-item" href="{{url_for('tariffs_id', category_id=cur_cat.id)}}">Показати всі тарифи</a></li>
+                                </ul>
                             </div>
+                            <h2> {{ cur_cat.name }} </h2>
+                            {% endif %}
 
+                            <table class="table table-bordered border-primary">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Показники</th>
+                                    <th scope="col">Значення тарифу</th>
+                                    <th scope="col">Дата початку дії</th>
+                                    <th scope="col">Активний/Не активний</th>
+                                    <th scope="col">Змінити тариф</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for tariff in tariffs %}
+                                <tr>
+                                    <td>{{ tariff.name }}</td>
+                                    <td>{{ tariff.value }}</td>
+                                    <td>{{ tariff.from_date }}</td>
+                                    <td>{%if tariff.to_date%}
+                                        <div style="color:red"> Не активний</div>
+                                        {%else%}
+                                        <div style="color:green"> Активний</div>
+                                        {%endif%}
+                                    </td>
+                                    <td> {%if not tariff.to_date%}
+                                        <a type="button"
+                                           href="{{url_for('tariffs_change_form', category_id=cur_cat.id, tariff_id=tariff.id).include_query_params(is_active='True')}}">Змінити
+                                            тариф</a>
+                                        {%endif%}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-
     <!-- end: content -->
 </div>
 
@@ -93,73 +110,7 @@
 
 <!-- custom -->
 <script src="{{ url_for('static', path='/asset/js/main.js') }}"></script>
-<script type="text/javascript">
 
-    for (let index = 1; index <= 30; ++index) {
-    try {
-        let s = `readings_date_${index}`;
-        var d = document.getElementById(s);
-        d.valueAsDate = new Date();
-    }
-    catch (error){};
-    };
-
-    const btn = document.getElementById('btn_send');
-    const url = '{{ url_for('add_counterreading')}}';
-
-    btn.addEventListener("click", () => {
-    let data = get_data();
-    if (data.length > 0){
-    setFetch(data)
-    }});
-
-
-
-async function setFetch(data) {
-try {
-    const response = await fetch(url, {
-                                    method: 'POST', // или 'PUT'
-                                    body: JSON.stringify(data),
-                                    headers: {
-                                      'Content-Type': 'application/json'
-                                    }});
-
-    const message = await response.text();
-    window.location.replace(`{{url_for('result_operation')}}?message=${message}`)
-
-} catch (e) {
-console.error(e);
-}
-}
-
-
-
-
-
-function get_data() {
-    let data = [];
-    for (let index = 1; index <= 30; ++index) {
-    try {
-        let s = `readings_value_${index}`;
-        let a = `readings_date_${index}`;
-
-        var d = document.getElementById(s);
-        var b = document.getElementById(a);
-
-        console.log(d.value);
-        if (d.value){
-            data.push({
-                value: d.value,
-                enter_date: b.value,
-                counter_id: index});
-        };
-        console.log(data);
-        }
-    catch (error){};
-    }
-    return data
-};
-</script>
 <script type="text/javascript">
     $(document).ready(function(){
 

@@ -3,11 +3,12 @@
 
 {% block content %}
 <!-- start: Content -->
+
 <div id="content">
     <div class="panel box-shadow-none content-header">
         <div class="panel-body">
             <div class="col-md-12">
-                <h3 class="animated fadeInLeft">Сплата рахунків</h3>
+                <h3 class="animated fadeInLeft">{{ message.header }}</h3>
                 <p class="animated fadeInDown">
                     Form <span class="fa-angle-right fa"></span> Form Element
                 </p>
@@ -19,12 +20,15 @@
             <div class="col-md-8">
                 <div class="panel form-element-padding">
                     <div class="panel-heading">
-                        <h4 style="color: green;">УСПІХ!</h4>
+                        <img src="{{ message.image }}"
+                             alt="Grapefruit slice atop a pile of other slices"
+                             height="200px">
+                        <h4 style="color: {{ message.color }};">{{ message.status_operation }}</h4>
                     </div>
                     <div class="panel-body" style="padding-bottom:30px;font-size:140%;">
-                        <div>Рахунки успішно сплачені</div>
+                        <div>{{ message.message_operation }}</div>
                         <div>
-                            <a href="{{url_for('add_payments')}}">Повернутися на сторінку сплати рахунків
+                            <a href="{{url_for(message.back_ref)}}">{{ message.back_ref_text }}
                                 --></a>
                         </div>
                         <div>
@@ -37,4 +41,6 @@
     </div>
 </div>
 
+
 {% endblock content %}
+{{ message }}

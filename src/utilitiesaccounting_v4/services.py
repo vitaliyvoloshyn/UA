@@ -1,7 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from decimal import Decimal
 from typing import List, TypeVar, Self, Sequence
 
+import loguru
 from sqlalchemy import Row
 
 from src.utilitiesaccounting_v4.repository import SqlRepository, SchemaModel
@@ -30,16 +31,19 @@ class BaseService[T](ABC):
     def calc(self):
         dept = []
         provider_id = None
+        category_photo = None
         for tm in self.tariff_managers:
             tariffs = self._get_tariffs(category_name=self.category_name,
                                         tariff_type=tm.tariff_type)
             dept.append(tm.calculate(tariffs))
             provider_id = self._get_provider_id(self.category_name)
+            category_photo = self._get_category_photo(self.category_name)
         total_accrued = self._get_total_debt(dept)
         total_payment = self._get_payment()
         total_debt = str(Decimal(total_accrued) - Decimal(total_payment))
         return DebtDTO(
             category_name=self.category_name,
+            category_photo=category_photo,
             provider_id=provider_id,
             debt=dept,
             total_accrued=total_accrued,
@@ -51,6 +55,14 @@ class BaseService[T](ABC):
         with UnitOfWork() as uow:
             provider_id = uow.category.get_provider_id_by_category_name(category_name)
         return provider_id
+
+    def _get_category_photo(self, category_name: str) -> str:
+        with UnitOfWork() as uow:
+            category = uow.category.get(name=category_name)
+            loguru.logger.debug(category)
+            if category:
+                category = category[0]
+        return category.photo
 
     @staticmethod
     def _get_total_debt(type_tariffs: List[TypeTariff]) -> str:
@@ -138,12 +150,14 @@ class HeatService[T](BaseService):
         OnTimeChargeTariffManager(),
     ]
 
+
 class TransportGasService[T](BaseService):
     category_name = 'Розподіл газу'
 
     tariff_managers = [
         SubscriptionTariffManager(),
     ]
+
 
 class InternetService[T](BaseService):
     category_name = 'Інтернет'
@@ -196,7 +210,6 @@ rubbish_service = RubishService()
 heat_service = HeatService()
 transport_gas_service = TransportGasService()
 internet_service = InternetService()
-
 
 if __name__ == '__main__':
     ...

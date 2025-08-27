@@ -6,6 +6,6 @@ from src.utilitiesaccounting_v4.fastapi_app import fastapi_app
 
 if __name__ == '__main__':
     # drop_db()
-    create_db()
+    # create_db()
     # add_data()
     uvicorn.run(app='main:fastapi_app', host='0.0.0.0', port=5555, reload=True)

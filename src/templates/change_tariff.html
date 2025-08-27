@@ -9,7 +9,7 @@
     <div class="panel box-shadow-none content-header">
         <div class="panel-body">
             <div class="col-md-12">
-                <h3 class="animated fadeInLeft">Оплата спожитих послуг</h3>
+                <h3 class="animated fadeInLeft">Зміна поточного тарифу</h3>
                 <p class="animated fadeInDown">
                     Form <span class="fa-angle-right fa"></span> Form Element
                 </p>
@@ -21,32 +21,51 @@
             <div class="col-md-8">
                 <div class="panel form-element-padding">
                     <div class="panel-heading">
-                        <h4>Список категорій</h4>
+                        <h3>{{ category.name }}</h3>
+                        <h4>{{ tariff.name }}</h4>
                     </div>
                     <div class="panel-body" style="padding-bottom:30px;">
-                        {% for category in categories %}
 
                         <div class="col-md-12">
-                            <h4>{{category.category_name}}</h4>
-                            <div class="form-group"><label class="col-sm-3 control-label text-right">Нараховано
-                                </label>
-                                <div class="col-sm-4">
-                                    <input
-                                            type="text"
-                                            class="form-control"
-                                            value="{{ category.total_debt }}"
-                                            disabled>
-                                </div>
-                            </div>
-                            <div class="form-group"><label class="col-sm-3 control-label text-right">Сплачую</label>
+                            <h4>Поточний тариф</h4>
+
+                            <div class="form-group"><label class="col-sm-3 control-label text-right">Значення
+                                тарифу</label>
                                 <div class="col-sm-4"><input type="number" class="form-control"
-                                                             id="pay_value_{{category.provider_id}}"
-                                                             value="{{ category.total_debt }}">
+                                                             value="{{ tariff.value }}"
+                                                             disabled>
                                 </div>
                             </div>
-                            <div class="form-group"><label class="col-sm-3 control-label text-right">Дата</label>
+                            <div class="form-group"><label class="col-sm-3 control-label text-right">Дата початку
+                                дії</label>
                                 <div class="col-sm-4"><input type="date" class="form-control"
-                                                             id="pay_date_{{category.provider_id}}">
+                                                             value="{{ tariff.from_date }}"
+                                                             disabled
+                                >
+                                </div>
+                            </div>
+
+
+                            <div style="padding-top: 0.5%">
+                                <hr style="border: 1px solid">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <h4>Новий тариф</h4>
+
+                            <div class="form-group"><label class="col-sm-3 control-label text-right">Значення
+                                тарифу</label>
+                                <div class="col-sm-4"><input type="number" class="form-control"
+                                                             id="value"
+                                >
+                                </div>
+                            </div>
+                            <div class="form-group"><label class="col-sm-3 control-label text-right">Дата початку
+                                дії</label>
+                                <div class="col-sm-4"><input type="date" class="form-control"
+                                                             id="from_date"
+                                >
                                 </div>
                             </div>
                             <div style="padding-top: 0.5%">
@@ -55,14 +74,15 @@
                         </div>
 
 
-                        {% endfor %}
+
+
                         <div class="form-group">
                             <div class="col-md-12">
                                 <font style="vertical-align: inherit;">
                                     <font style="vertical-align: inherit;"><input type="button"
                                                                                   class=" btn btn-round btn-primary"
-                                                                                  value="Сплатити"
-                                                                                  id="btn_pay">
+                                                                                  value="Зберегти"
+                                                                                  id="btn_save">
                                     </font>
                                 </font>
                             </div>
@@ -74,7 +94,7 @@
 
         </div>
     </div>
-
+    {{tariff}}
     <!-- end: content -->
 </div>
 
@@ -94,26 +114,20 @@
 <!-- custom -->
 <script src="{{ url_for('static', path='/asset/js/main.js') }}"></script>
 <script type="text/javascript">
-    for (let index = 1; index <= 30; ++index) {
-    try {
-        let s = `pay_date_${index}`;
-        var d = document.getElementById(s);
-        d.valueAsDate = new Date();
-    }
-    catch (error){};
-    };
+
+    let fd = document.getElementById("from_date");
+    let v = document.getElementById("value");
+    fd.valueAsDate = new Date();
 
 
-    const btn = document.getElementById('btn_pay');
-    console.log(btn);
-    const url = '{{ url_for('add_payments')}}';
+    const btn = document.getElementById('btn_save');
+    const url = '{{ url_for('tariff_change', tariff_id=tariff.id)}}';
 
     btn.addEventListener("click", () => {
     let data = get_data();
     console.log(data);
-    if (data.length > 0){
-    setFetch(data)
-    }});
+    setFetch(data);
+    });
 
 
 
@@ -125,9 +139,10 @@ try {
                                     headers: {
                                       'Content-Type': 'application/json'
                                     }});
+
     const message = await response.text();
     window.location.replace(`{{url_for('result_operation')}}?message=${message}`)
-;
+
 } catch (e) {
 console.error(e);
 }
@@ -138,27 +153,25 @@ console.error(e);
 
 
 function get_data() {
-    let data = []
-    for (let index = 1; index <= 30; ++index) {
+    let data = {}
     try {
-        let s = `pay_value_${index}`;
-        let a = `pay_date_${index}`;
+        console.log('begin get data');
 
-        var d = document.getElementById(s);
-        var b = document.getElementById(a);
+        data['value'] = v.value;
+        data['from_date'] = fd.value;
+        data['tariff_type_id'] = {{ tariff.tariff_type_id }};
+        data['provider_id'] = {{ tariff.provider_id }};
+        data['name'] = '{{ tariff.name }}';
+        data['counter_id'] = {{ tariff.counter_id }};
 
-        if (d.value){
-            data.push({
-                value: d.value,
-                date: b.value,
-                provider_id: index});
-        };
 
-        }
-    catch (error){};
     }
+    catch (error){console.log('error in get_data', error)};
+
     return data
 };
+
+
 </script>
 
 <!-- end: Javascript -->

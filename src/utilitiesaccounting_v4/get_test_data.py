@@ -15,10 +15,7 @@ electric_service = ElectricService()
 electric_service.add_tariff_manager(SubscriptionTariffManager)
 
 
-def get_category():
-    with CategoryService().storage_manager() as sm:
-        res = sm.category.get()
-        log.debug(res)
+
 
 
 def get_provider():
