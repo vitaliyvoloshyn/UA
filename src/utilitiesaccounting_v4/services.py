@@ -59,7 +59,6 @@ class BaseService[T](ABC):
     def _get_category_photo(self, category_name: str) -> str:
         with UnitOfWork() as uow:
             category = uow.category.get(name=category_name)
-            loguru.logger.debug(category)
             if category:
                 category = category[0]
         return category.photo
