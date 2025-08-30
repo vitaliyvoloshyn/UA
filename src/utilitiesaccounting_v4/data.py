@@ -489,6 +489,7 @@ payments = [
     # internet
     PaymentAddDTO(value='250.00', date=datetime.date(2025, 6, 30), provider_id=8),
     PaymentAddDTO(value='250.00', date=datetime.date(2025, 7, 29), provider_id=8),
+    PaymentAddDTO(value='250.00', date=datetime.date(2025, 8, 30), provider_id=8),
 ]
 
 
