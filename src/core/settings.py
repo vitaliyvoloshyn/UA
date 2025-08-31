@@ -6,4 +6,4 @@ APP_RELOAD = False
 # --------------------\ Database /--------------------
 
 DB_URL = f"sqlite:///ua.db"
-DB_ECHO = True
+DB_ECHO = False
