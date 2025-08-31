@@ -1,15 +1,9 @@
-from src.utilitiesaccounting_v4.repository import RepositoryBase, SchemaModel
+from src.auth.models import User
+from src.auth.schemas import UserDTO, UserAddDTO
+from src.utilitiesaccounting_v4.repository import SqlRepository
 
 
-class UserRepository(RepositoryBase):
-    def get(self):
-        ...
-
-    def add(self, record: SchemaModel):
-        ...
-
-    def update(self, pk: int, **data):
-        ...
-
-    def remove(self, pk: int):
-        ...
+class UserRepository(SqlRepository):
+    model = User
+    dto = UserDTO
+    dto_add = UserAddDTO
