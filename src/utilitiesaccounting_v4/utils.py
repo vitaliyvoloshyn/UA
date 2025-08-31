@@ -69,8 +69,10 @@ def get_begin_current_month() -> date:
 def get_total_debt_value(debts: List[DebtDTO]):
     res = Decimal('0')
     for debt in debts:
-        res += Decimal(debt.total_debt)
+        if float(debt.total_debt) > 0:
+            res += Decimal(debt.total_debt)
     return res
+
 
 def remove_inactive_tariffs(tariffs: List[TariffDTO]) -> List[TariffDTO]:
     """идаляє зі списку тарифів тільки ті тарифи, в яких кінцева дата не порожня"""

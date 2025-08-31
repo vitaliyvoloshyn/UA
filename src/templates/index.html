@@ -34,7 +34,7 @@
                                     {%for t in tariff%}
                                     {%for t1 in t%}
                                     {% if t1.is_active%}
-                                        &nbsp;&nbsp;&nbsp;&nbsp;{{t1.tariff_type_name}}: {{t1.value}}
+                                    &nbsp;&nbsp;&nbsp;&nbsp;{{t1.tariff_type_name}}: {{t1.value}}
                                     {%endif%}
 
                                     {%endfor%}
@@ -42,13 +42,13 @@
                                     {%endfor%}
                                     {%endfor%}</p>
                                 <p class="card-text">Поточні показники лічильників:
-                                {% for tariffs in d.debt %}
+                                    {% for tariffs in d.debt %}
                                     {%for tariff in tariffs%}
                                     {%for t in tariff%}
                                     {%for t1 in t%}
                                     {% if t1.is_active%}
                                     {%if t1.cur_readings%}
-                                        &nbsp;&nbsp;&nbsp;&nbsp;{{t1.cur_readings}}
+                                    &nbsp;&nbsp;&nbsp;&nbsp;{{t1.cur_readings}}
                                     {%endif%}
                                     {%endif%}
 
@@ -56,7 +56,9 @@
                                     {%endfor%}
                                     {%endfor%}
                                     {%endfor%}</p>
-                                <h4 class="card-text" style="color: {%if d.total_debt|int <= 0%}green{%else%}red{%endif%}">Заборгованість: {{d.total_debt}}</h4>
+                                <h4 class="card-text"
+                                    style="color: {%if d.total_debt|int <= 0%}green{%else%}red{%endif%}">Заборгованість:
+                                    {{d.total_debt}}</h4>
 
                             </div>
                         </div>
@@ -65,7 +67,8 @@
 
 
                     <div>
-                        <strong style="font-size: 1.5em;">Сумарна заборгованість по всім категоріям складає - {{ total_debt }}</strong>
+                        <strong style="font-size: 1.5em;">Сумарна заборгованість по всім категоріям складає - {{
+                            total_debt }}</strong>
                     </div>
                 </div>
             </div>
