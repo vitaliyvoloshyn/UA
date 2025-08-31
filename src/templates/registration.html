@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <title>Miminium</title>
+
+  <!-- start: Css -->
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/bootstrap.min.css')}}">
+
+  <!-- plugins -->
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/font-awesome.min.css')}}"/>
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/simple-line-icons.css')}}"/>
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/animate.min.css')}}"/>
+  <link href="{{url_for('static', path='/asset/css/style.css')}}" rel="stylesheet">
+  <!-- end: Css -->
+
+  <link rel="shortcut icon" href="{{url_for('static', path='/asset/img/logomi.png')}}">
+
+    </head>
+
+    <body id="mimin" class="dashboard form-signin-wrapper">
+
+      <div class="container">
+
+        <form class="form-signin">
+          <div class="panel periodic-login">
+              <div class="panel-body text-center">
+                  <h3 >Система обліку комунальних послуг</h3>
+                  <h4>Реєстрація нового користувача</h4>
+
+                  <i class="icons icon-arrow-down"></i>
+                  <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                    <input type="text" class="form-text" required id="first_name">
+                    <span class="bar"></span>
+                    <label>Ім'я</label>
+                  </div>
+                  <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                    <input type="text" class="form-text" required id="last_name">
+                    <span class="bar"></span>
+                    <label>Прізвище</label>
+                  </div>
+                  <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                    <input type="text" class="form-text" required id="email">
+                    <span class="bar"></span>
+                    <label>Email</label>
+                  </div>
+                  <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                    <input type="password" class="form-text" required id="password">
+                    <span class="bar"></span>
+                    <label>Пароль</label>
+                  </div>
+<!--                  bel>-->
+                  <input type="submit" class="btn col-md-12" value="Зареєструватися"/>
+              </div>
+                <div class="text-center" style="padding:5px;">
+                    <a href="login.html">Вже маєте аккаунт?</a>
+                </div>
+          </div>
+        </form>
+
+      </div>
+
+      <!-- end: Content -->
+      <!-- start: Javascript -->
+      <script src="{{url_for('static', path='/asset/js/jquery.min.js')}}"></script>
+      <script src="{{url_for('static', path='/asset/js/jquery.ui.min.js')}}"></script>
+      <script src="{{url_for('static', path='/asset/js/bootstrap.min.js')}}"></script>
+
+
+      <!-- custom -->
+      <script src="{{url_for('static', path='/asset/js/main.js')}}"></script>
+      <script type="text/javascript">
+
+     </script>
+     <!-- end: Javascript -->
+   </body>
+   </html>
