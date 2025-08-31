@@ -5,16 +5,16 @@ from typing import TypeVar, Sequence
 
 from pydantic import BaseModel
 
-from src.utilitiesaccounting_v4.schemas.payment_dto import PaymentAddDTO
-from src.utilitiesaccounting_v4.uow import UnitOfWork
+from src.core.uow import StorageManager
+from src.utilitiesaccounting.schemas.payment_dto import PaymentAddDTO
 
-from src.utilitiesaccounting_v4.schemas.category_dto import CategoryAddDTO
-from src.utilitiesaccounting_v4.schemas.counter_dto import CounterAddDTO
-from src.utilitiesaccounting_v4.schemas.counter_reading_dto import CounterReadingAddDTO
-from src.utilitiesaccounting_v4.schemas.measurement_unit_dto import MeasurementUnitAddDTO
-from src.utilitiesaccounting_v4.schemas.provider_dto import ProviderAddDTO
-from src.utilitiesaccounting_v4.schemas.tariff_dto import TariffAddDTO
-from src.utilitiesaccounting_v4.schemas.tariff_type_dto import TariffTypeAddDTO
+from src.utilitiesaccounting.schemas.category_dto import CategoryAddDTO
+from src.utilitiesaccounting.schemas.counter_dto import CounterAddDTO
+from src.utilitiesaccounting.schemas.counter_reading_dto import CounterReadingAddDTO
+from src.utilitiesaccounting.schemas.measurement_unit_dto import MeasurementUnitAddDTO
+from src.utilitiesaccounting.schemas.provider_dto import ProviderAddDTO
+from src.utilitiesaccounting.schemas.tariff_dto import TariffAddDTO
+from src.utilitiesaccounting.schemas.tariff_type_dto import TariffTypeAddDTO
 
 """Порядок добавления сущностей в БД
 - единицы измерения;
@@ -495,19 +495,19 @@ payments = [
 
 @dataclass
 class Repositories:
-    c: str = 'category'
-    p: str = 'provider'
-    m: str = 'measurement_unit'
-    tt: str = 'tariff_type'
-    t: str = 'tariff'
-    cntr: str = 'counter'
-    cr: str = 'counter_reading'
-    pymnt: str = 'payment'
+    c: str = 'categoryrepository'
+    p: str = 'providerrepository'
+    m: str = 'measurementunitrepository'
+    tt: str = 'tarifftyperepository'
+    t: str = 'tariffrepository'
+    cntr: str = 'counterrepository'
+    cr: str = 'counterreadingrepository'
+    pymnt: str = 'paymentrepository'
 
 
 def add_(records: Sequence[B], repo: str) -> None:
-    with UnitOfWork() as uow:
-        uow.__getattribute__(repo).add_all(records)
+    with StorageManager() as sm:
+        sm.__getattribute__(repo).add_all(records)
 
 
 def add_data():

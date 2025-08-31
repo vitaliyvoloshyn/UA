@@ -2,18 +2,16 @@ from datetime import date
 from decimal import Decimal
 from typing import List
 
-from loguru import logger
-
-from src.utilitiesaccounting_v4.schemas.counter_reading_dto import CounterReadingAddDTO
-from src.utilitiesaccounting_v4.schemas.debt_dto import DebtDTO
-from src.utilitiesaccounting_v4.schemas.payment_dto import PaymentAddDTO
-from src.utilitiesaccounting_v4.schemas.tariff_dto import TariffDTO
-from src.utilitiesaccounting_v4.uow import UnitOfWork
+from src.core.uow import StorageManager
+from src.utilitiesaccounting.schemas.counter_reading_dto import CounterReadingAddDTO
+from src.utilitiesaccounting.schemas.debt_dto import DebtDTO
+from src.utilitiesaccounting.schemas.payment_dto import PaymentAddDTO
+from src.utilitiesaccounting.schemas.tariff_dto import TariffDTO
 
 
 def get_cr_last_position(counter_id: int):
-    with UnitOfWork() as uow:
-        return uow.counter.get(relation=True, id=counter_id)
+    with StorageManager() as sm:
+        return sm.counter.get(relation=True, id=counter_id)
 
 
 def validate_data(counter_id: int, value: int, date_: date) -> bool:
@@ -81,6 +79,7 @@ def remove_inactive_tariffs(tariffs: List[TariffDTO]) -> List[TariffDTO]:
         if tariff.to_date is None:
             tariffs_copy.append(tariff)
     return tariffs_copy
+
 
 def remove_tariff_type_3_tariffs(tariffs: List[TariffDTO]) -> List[TariffDTO]:
     """Видаляє зі списку тарифів тільки ті тарифи, в яких tariff_type_id вказано 3 ('Разове нарахування')"""

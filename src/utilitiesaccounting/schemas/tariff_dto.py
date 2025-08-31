@@ -5,9 +5,9 @@ import loguru
 from fastapi import HTTPException
 from pydantic import BaseModel, model_validator, ValidationError, field_validator
 
-from src.utilitiesaccounting_v4.models import Base
-from src.utilitiesaccounting_v4.schemas.counter_dto import CounterRelDTO
-from src.utilitiesaccounting_v4.schemas.tariff_type_dto import TariffTypeDTO
+from src.utilitiesaccounting.models import Base
+from src.utilitiesaccounting.schemas.counter_dto import CounterRelDTO
+from src.utilitiesaccounting.schemas.tariff_type_dto import TariffTypeDTO
 
 
 class TariffAddDTO(BaseModel):

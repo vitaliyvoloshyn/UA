@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-from src.utilitiesaccounting_v4.schemas.tariff_dto import TariffDTO, TariffRelDTO
+from src.utilitiesaccounting.schemas.tariff_dto import TariffDTO, TariffRelDTO
 
 
 class ProviderAddDTO(BaseModel):

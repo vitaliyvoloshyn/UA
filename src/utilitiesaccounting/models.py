@@ -2,16 +2,15 @@ from datetime import date
 from typing import List
 
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-
-class Base(DeclarativeBase):
-    id: Mapped[int] = mapped_column(primary_key=True)
+from src.core.database import Base
 
 
 class Category(Base):
     __tablename__ = 'categories'
     # main fields
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique=True)
     photo: Mapped[str] = mapped_column(nullable=True)
     # relationships
@@ -24,6 +23,7 @@ class Category(Base):
 class MeasurementUnit(Base):
     __tablename__ = 'measurement_units'
     # main fields
+    id: Mapped[int] = mapped_column(primary_key=True)
     value: Mapped[str] = mapped_column(unique=True)
     # relationships
     counters: Mapped[List['Counter']] = relationship(back_populates='measurement_unit', lazy='selectin')
@@ -32,6 +32,7 @@ class MeasurementUnit(Base):
 class CounterReading(Base):
     __tablename__ = 'counter_readings'
     # main fields
+    id: Mapped[int] = mapped_column(primary_key=True)
     value: Mapped[int]
     enter_date: Mapped[date]
     counter_id: Mapped[int] = mapped_column(ForeignKey('counters.id'))
@@ -42,6 +43,7 @@ class CounterReading(Base):
 class Counter(Base):
     __tablename__ = 'counters'
     # main fields
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique=True)
     is_active: Mapped[bool]
     measurement_unit_id: Mapped[int] = mapped_column(ForeignKey('measurement_units.id'), nullable=True)
@@ -54,6 +56,7 @@ class Counter(Base):
 class Provider(Base):
     __tablename__ = 'providers'
     # main fields
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique=True)
     category_id: Mapped[int] = mapped_column(ForeignKey('categories.id'))
     # relationships
@@ -65,6 +68,7 @@ class Provider(Base):
 class TariffType(Base):
     __tablename__ = 'tariff_types'
     # main fields
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique=True)
     # relationships
     tariffs: Mapped[list['Tariff']] = relationship(back_populates='tariff_type', lazy='selectin')
@@ -73,6 +77,7 @@ class TariffType(Base):
 class Tariff(Base):
     __tablename__ = 'tariffs'
     # main fields
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     value: Mapped[str]
     from_date: Mapped[date]
@@ -87,11 +92,11 @@ class Tariff(Base):
 
 
 class Payment(Base):
-    __tablename__='payments'
+    __tablename__ = 'payments'
     # main fields
+    id: Mapped[int] = mapped_column(primary_key=True)
     value: Mapped[str]
     date: Mapped[date]
     provider_id: Mapped[int] = mapped_column(ForeignKey('providers.id'))
     # relationships
     provider: Mapped['Provider'] = relationship(back_populates='payments')
-

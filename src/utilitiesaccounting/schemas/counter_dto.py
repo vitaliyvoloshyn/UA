@@ -2,8 +2,8 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
-from src.utilitiesaccounting_v4.schemas.counter_reading_dto import CounterReadingDTO
-from src.utilitiesaccounting_v4.schemas.measurement_unit_dto import MeasurementUnitDTO
+from src.utilitiesaccounting.schemas.counter_reading_dto import CounterReadingDTO
+from src.utilitiesaccounting.schemas.measurement_unit_dto import MeasurementUnitDTO
 
 
 class CounterAddDTO(BaseModel):

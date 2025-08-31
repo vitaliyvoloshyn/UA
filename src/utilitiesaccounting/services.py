@@ -2,14 +2,14 @@ from abc import ABC
 from decimal import Decimal
 from typing import List, TypeVar, Self, Sequence
 
-import loguru
+from pydantic import BaseModel
 from sqlalchemy import Row
 
-from src.utilitiesaccounting_v4.repository import SqlRepository, SchemaModel
-from src.utilitiesaccounting_v4.schemas.debt_dto import DebtDTO, TypeTariff
-from src.utilitiesaccounting_v4.tariff_manager import TariffManager, ConsumptionVolumeTariffManager, \
+from src.core.uow import StorageManager
+from src.utilitiesaccounting.repository import SqlRepository
+from src.utilitiesaccounting.schemas.debt_dto import DebtDTO, TypeTariff
+from src.utilitiesaccounting.tariff_manager import TariffManager, ConsumptionVolumeTariffManager, \
     SubscriptionTariffManager, OnTimeChargeTariffManager
-from src.utilitiesaccounting_v4.uow import UnitOfWork
 
 REPO = TypeVar('REPO', bound=SqlRepository)
 T = TypeVar("T", bound=TariffManager)
@@ -19,7 +19,7 @@ class BaseService[T](ABC):
     category_name: str
     tariff_managers: List[TariffManager] = []
     instances: List[Self] = []
-    storage_manager: type[UnitOfWork] = UnitOfWork
+    storage_manager: type[StorageManager] = StorageManager
     a: int = 0
 
     def __init__(self):
@@ -52,13 +52,13 @@ class BaseService[T](ABC):
         )
 
     def _get_provider_id(self, category_name: str) -> int:
-        with UnitOfWork() as uow:
-            provider_id = uow.category.get_provider_id_by_category_name(category_name)
+        with StorageManager() as sm:
+            provider_id = sm.categoryrepository.get_provider_id_by_category_name(category_name)
         return provider_id
 
     def _get_category_photo(self, category_name: str) -> str:
-        with UnitOfWork() as uow:
-            category = uow.category.get(name=category_name)
+        with StorageManager() as sm:
+            category = sm.categoryrepository.get(name=category_name)
             if category:
                 category = category[0]
         return category.photo
@@ -77,18 +77,19 @@ class BaseService[T](ABC):
 
     def _get_tariffs(self, category_name: str, tariff_type: int):
         with self.storage_manager() as sm:
-            tariffs = sm.tariff.get_tariffs_by_category_tariff_type(category_name=category_name,
-                                                                    tariff_type=tariff_type)
+            tariffs = sm.tariffrepository.get_tariffs_by_category_tariff_type(category_name=category_name,
+                                                                              tariff_type=tariff_type)
             return tariffs
 
     def _get_payment(self):
         with self.storage_manager() as sm:
-            category = sm.category.get(relation=True, name=self.category_name)
+            category = sm.categoryrepository.get(relation=True, name=self.category_name)
             provider = category[0].provider.id
-            payments = sm.payment.get(provider_id=provider)
+            payments = sm.paymentrepository.get(provider_id=provider)
         return self._calc_total_payments(payments)
 
-    def _calc_total_payments(self, payments: List[SchemaModel] | Sequence[Row]):
+    @staticmethod
+    def _calc_total_payments(payments: List[BaseModel] | Sequence[Row]):
         res = Decimal('0')
         for p in payments:
             res = res + Decimal(p.value)

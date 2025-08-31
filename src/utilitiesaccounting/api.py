@@ -4,12 +4,12 @@ import loguru
 from fastapi import APIRouter
 from starlette.responses import JSONResponse
 
-from src.utilitiesaccounting_v4.schemas.counter_reading_dto import CounterReadingAddDTO, CounterReadingDTO
-from src.utilitiesaccounting_v4.schemas.payment_dto import PaymentAddDTO, PaymentDTO
-from src.utilitiesaccounting_v4.schemas.result_content import SuccessResultContent, ErrorResultContent
-from src.utilitiesaccounting_v4.schemas.tariff_dto import TariffDTO, TariffAddDTO
-from src.utilitiesaccounting_v4.uow import UnitOfWork
-from src.utilitiesaccounting_v4.utils import validate_counter_readings, validate_payments
+from src.utilitiesaccounting.schemas.counter_reading_dto import CounterReadingAddDTO, CounterReadingDTO
+from src.utilitiesaccounting.schemas.payment_dto import PaymentAddDTO, PaymentDTO
+from src.utilitiesaccounting.schemas.result_content import SuccessResultContent, ErrorResultContent
+from src.utilitiesaccounting.schemas.tariff_dto import TariffDTO, TariffAddDTO
+from src.utilitiesaccounting.utils import validate_counter_readings, validate_payments
+from src.core.uow import StorageManager
 
 api_router = APIRouter(
     prefix='/api',
@@ -33,8 +33,8 @@ def add_counter_reading(records: List[CounterReadingAddDTO]):
         loguru.logger.error(f"Add new counter readings - {e}")
         return JSONResponse(content=res_cont.model_dump(),
                             status_code=400)
-    with UnitOfWork() as uow:
-        uow.counter_reading.add_all(records)
+    with StorageManager() as sm:
+        sm.counter_reading.add_all(records)
         attrs['message_operation'] = 'Нові показники успішно збережені'
         res_cont = SuccessResultContent(**attrs)
     loguru.logger.info(f"Added new counter readings")
@@ -43,29 +43,29 @@ def add_counter_reading(records: List[CounterReadingAddDTO]):
 
 @api_router.get('/counter_readings', name='crs')
 def get_crs() -> List[CounterReadingDTO]:
-    with UnitOfWork() as uow:
-        crs = uow.counter_reading.get()
+    with StorageManager() as sm:
+        crs = sm.counter_reading.get()
     return crs
 
 
 @api_router.get('/counter_readings/{pk}', name='cr')
 def get_cr_by_id(pk: int) -> CounterReadingDTO:
-    with UnitOfWork() as uow:
-        cr = uow.counter_reading.get(id=pk)
+    with StorageManager() as sm:
+        cr = sm.counter_reading.get(id=pk)
     return cr
 
 
 @api_router.put('/counter_readings/{pk}', name='cr_put')
 def put_cr_by_id(pk: int, data: CounterReadingDTO):
-    with UnitOfWork() as uow:
-        uow.counter_reading.update(pk=pk, **data.model_dump())
+    with StorageManager() as sm:
+        sm.counter_reading.update(pk=pk, **data.model_dump())
     return JSONResponse(content='OK', status_code=200)
 
 
 @api_router.delete('/counter_readings/{pk}', name='cr_del')
 def del_cr_by_id(pk: int):
-    with UnitOfWork() as uow:
-        uow.counter_reading.remove(pk)
+    with StorageManager() as sm:
+        sm.counter_reading.remove(pk)
     return JSONResponse(content='OK', status_code=200)
 
 
@@ -85,8 +85,8 @@ def form_add_payments(data: List[PaymentAddDTO]):
         res_cont = ErrorResultContent(**attrs)
         return JSONResponse(content=res_cont.model_dump(),
                             status_code=400)
-    with UnitOfWork() as uow:
-        uow.payment.add_all(data)
+    with StorageManager() as sm:
+        sm.payment.add_all(data)
         attrs['message_operation'] = 'Рахунки успішно сплачені'
         res_cont = SuccessResultContent(**attrs)
     return JSONResponse(content=res_cont.model_dump(), status_code=200)
@@ -94,23 +94,23 @@ def form_add_payments(data: List[PaymentAddDTO]):
 
 @api_router.get('/payments')
 def get_payments() -> List[PaymentDTO]:
-    with UnitOfWork() as uow:
-        payments = uow.payment.get()
+    with StorageManager() as sm:
+        payments = sm.payment.get()
     return payments
 
 
 @api_router.get('/payments/{item_id}')
 def get_payment(item_id: int) -> List[PaymentDTO]:
-    with UnitOfWork() as uow:
-        payments = uow.payment.get(id=item_id)
+    with StorageManager() as sm:
+        payments = sm.payment.get(id=item_id)
     return payments
 
 
 @api_router.put('/payments/{item_id}')
 def put_payment(item_id: int, pymnt: PaymentAddDTO):
     data = pymnt.model_dump()
-    with UnitOfWork() as uow:
-        uow.payment.update(item_id,
+    with StorageManager() as sm:
+        sm.payment.update(item_id,
                            **data,
                            )
     return JSONResponse(content='OK', status_code=200)
@@ -118,22 +118,22 @@ def put_payment(item_id: int, pymnt: PaymentAddDTO):
 
 @api_router.delete('/payments/{pk}', name='pymnt_del')
 def del_pymnt_by_id(pk: int):
-    with UnitOfWork() as uow:
-        uow.payment.remove(pk)
+    with StorageManager() as sm:
+        sm.payment.remove(pk)
     return JSONResponse(content='OK', status_code=200)
 
 
 @api_router.get('/tariffs', name='tariffs')
 def get_tariffs() -> List[TariffDTO]:
-    with UnitOfWork() as uow:
-        tariffs = uow.tariff.get()
+    with StorageManager() as sm:
+        tariffs = sm.tariff.get()
     return tariffs
 
 
 @api_router.get('/tariffs/{item_id}', name='tariff')
 def get_tariff_by_id(item_id: int):
-    with UnitOfWork() as uow:
-        tariff = uow.tariff.get(id=item_id)
+    with StorageManager() as sm:
+        tariff = sm.tariff.get(id=item_id)
         if not tariff:
             return JSONResponse(content="Resource does not exist")
     return tariff[0]
@@ -141,15 +141,15 @@ def get_tariff_by_id(item_id: int):
 
 @api_router.delete('/tariffs/{item_id}', name='tariff_del')
 def del_tariff_by_id(item_id: int):
-    with UnitOfWork() as uow:
-        uow.tariff.remove(pk=item_id)
+    with StorageManager() as sm:
+        sm.tariff.remove(pk=item_id)
     return JSONResponse(content='OK', status_code=200)
 
 
 @api_router.put('/tariffs/{item_id}', name='tariff_update')
 def update_tariff_by_id(item_id: int, data: TariffAddDTO):
-    with UnitOfWork() as uow:
-        uow.tariff.update(pk=item_id, **data.model_dump())
+    with StorageManager() as sm:
+        sm.tariff.update(pk=item_id, **data.model_dump())
     return JSONResponse(content='OK', status_code=200)
 
 
@@ -161,8 +161,8 @@ def add_tariff_by_id(data: TariffAddDTO):
         'back_ref_text': 'Повернутися на сторінку перегляду тарифів',
     }
     try:
-        with UnitOfWork() as uow:
-            uow.tariff.add(data)
+        with StorageManager() as sm:
+            sm.tariff.add(data)
     except Exception as e:
         loguru.logger.error(e)
         attrs['message_operation'] = str(e)
@@ -185,9 +185,9 @@ def change_tariff(new_tariff: TariffAddDTO, tariff_id: int):
         'back_ref_text': 'Повернутися на сторінку перегляду тарифів',
     }
 
-    with UnitOfWork() as uow:
+    with StorageManager() as sm:
         try:
-            uow.tariff.change_tariff(new_tariff, tariff_id)
+            sm.tariff.change_tariff(new_tariff, tariff_id)
         except Exception as e:
             loguru.logger.error(e)
             attrs['message_operation'] = str(e)

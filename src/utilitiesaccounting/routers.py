@@ -7,9 +7,9 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse
 from starlette.templating import Jinja2Templates
 
-from src.utilitiesaccounting_v4.services import electric_service
-from src.utilitiesaccounting_v4.uow import UnitOfWork
-from src.utilitiesaccounting_v4.utils import get_total_debt_value, remove_tariff_type_3_tariffs, remove_inactive_tariffs
+from src.utilitiesaccounting.services import electric_service
+from src.core.uow import StorageManager
+from src.utilitiesaccounting.utils import get_total_debt_value, remove_tariff_type_3_tariffs, remove_inactive_tariffs
 
 main_router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -52,8 +52,8 @@ def success_add_cr(request: Request):
 @main_router.get('/addcounterreadings', response_class=HTMLResponse, name='addcounterreadings')
 def form_add_counter_readings(request: Request):
     """СТРАНИЦА ВНЕСЕНИЯ ПОКАЗАНИЙ СЧЕТЧИКОВ"""
-    with UnitOfWork() as uow:
-        counters = uow.counter.get(relation=True)
+    with StorageManager() as uow:
+        counters = uow.counterrepository.get(relation=True)
     return templates.TemplateResponse(
         request=request,
         name='formelement.html',
@@ -100,8 +100,8 @@ def result_operation(request: Request, message: str):
 @main_router.get('/counterreadings', response_class=HTMLResponse, name='cr')
 def get_cr(request: Request):
     """СТОРІНКА ВІДОБРАЖЕННЯ ПОКАЗНИКІВ ЛІЧИЛЬНИКІВ"""
-    with UnitOfWork() as uow:
-        counters = uow.counter.get(relation=True)
+    with StorageManager() as uow:
+        counters = uow.counterrepository.get(relation=True)
     return templates.TemplateResponse(
         request=request,
         name='counterreadings.html',
@@ -114,9 +114,9 @@ def get_cr(request: Request):
 @main_router.get('/counterreadings/{counter_id}', response_class=HTMLResponse, name='cr_id')
 def get_cr_by_id(request: Request, counter_id: int):
     """СТОРІНКА ВІДОБРАЖЕННЯ ПОКАЗНИКІВ ЛІЧИЛЬНИКІВ"""
-    with UnitOfWork() as uow:
-        counters = uow.counter.get(relation=True)
-        counter = uow.counter.get(relation=True, id=counter_id)
+    with StorageManager() as uow:
+        counters = uow.counterrepository.get(relation=True)
+        counter = uow.counterrepository.get(relation=True, id=counter_id)
     return templates.TemplateResponse(
         request=request,
         name='counterreadings.html',
@@ -130,8 +130,8 @@ def get_cr_by_id(request: Request, counter_id: int):
 @main_router.get('/payments', response_class=HTMLResponse, name='pymnt')
 def get_payments(request: Request):
     """СТОРІНКА ВІДОБРАЖЕННЯ ІСТОРІЇ ПО ОПЛАТІ"""
-    with UnitOfWork() as uow:
-        providers = uow.provider.get(relation=True)
+    with StorageManager() as uow:
+        providers = uow.providerrepository.get(relation=True)
     return templates.TemplateResponse(
         request=request,
         name='payments.html',
@@ -144,9 +144,9 @@ def get_payments(request: Request):
 @main_router.get('/payments/{provider_id}', response_class=HTMLResponse, name='pymnt_id')
 def get_payment_by_id(request: Request, provider_id: int):
     """СТОРІНКА ВІДОБРАЖЕННЯ ІСТОРІЇ ПО ОПЛАТІ ПО ВИЗНАЧЕНОМУ ПРОВАЙДЕРУ"""
-    with UnitOfWork() as uow:
-        providers = uow.provider.get(relation=True)
-        payments = uow.payment.get(relation=True, provider_id=provider_id)
+    with StorageManager() as uow:
+        providers = uow.providerrepository.get(relation=True)
+        payments = uow.paymentrepository.get(relation=True, provider_id=provider_id)
     return templates.TemplateResponse(
         request=request,
         name='payments.html',
@@ -160,10 +160,10 @@ def get_payment_by_id(request: Request, provider_id: int):
 @main_router.get('/add_tariff/', name='add_tariff', response_class=HTMLResponse)
 def page_add_tariff(request: Request):
     """СТОРІНКА ВІДОБРАЖЕННЯ ФОРМИ ДЛЯ ДОДАННЯ НОВОГО ТАРИФУ"""
-    with UnitOfWork() as uow:
-        providers = uow.provider.get()
-        counters = uow.counter.get(is_active=True)
-        tariff_types = uow.tariff_type.get()
+    with StorageManager() as uow:
+        providers = uow.providerrepository.get()
+        counters = uow.counterrepository.get(is_active=True)
+        tariff_types = uow.tarifftyperepository.get()
 
     return templates.TemplateResponse(
         request=request,
@@ -179,8 +179,8 @@ def page_add_tariff(request: Request):
 @main_router.get('/tariffs/', name='tariffs', response_class=HTMLResponse)
 def get_all_tariffs(request: Request):
     """Сторінка відображення всіх тарифів"""
-    with UnitOfWork() as uow:
-        categories = uow.category.get()
+    with StorageManager() as uow:
+        categories = uow.categoryrepository.get()
     return templates.TemplateResponse(
         request=request,
         name='tariffs.html',
@@ -196,12 +196,12 @@ def get_all_tariffs(request: Request,
                     is_active: Annotated[bool, Query()] = None):
     """Сторінка відображення всіх тарифів
     флаг is_active служить для фільтрації тарифів по статусу (активний/не активний)"""
-    with UnitOfWork() as uow:
-        categories = uow.category.get()
-        cur_cat = uow.category.get(id=category_id)
+    with StorageManager() as uow:
+        categories = uow.categoryrepository.get()
+        cur_cat = uow.categoryrepository.get(id=category_id)
         if cur_cat:
             cur_cat = cur_cat[0]
-        tariffs = uow.tariff.get_tariffs_by_category_id(category_id)
+        tariffs = uow.tariffrepository.get_tariffs_by_category_id(category_id)
         if is_active:
             tariffs = remove_inactive_tariffs(tariffs)
         tariffs = remove_tariff_type_3_tariffs(tariffs)
@@ -219,11 +219,11 @@ def get_all_tariffs(request: Request,
 @main_router.get('/tariff/{category_id}/{tariff_id}', name='tariffs_change_form', response_class=HTMLResponse)
 def change_tariffs(request: Request, category_id: int, tariff_id: int):
     """Сторінка відображення всіх тарифів"""
-    with UnitOfWork() as uow:
-        category = uow.category.get(id=category_id)
+    with StorageManager() as uow:
+        category = uow.categoryrepository.get(id=category_id)
         if category:
             category = category[0]
-        tariff = uow.tariff.get(id=tariff_id)
+        tariff = uow.tariffrepository.get(id=tariff_id)
         if tariff:
             tariff = tariff[0]
 

@@ -3,7 +3,7 @@ from typing import List, Union, Optional
 
 from pydantic import BaseModel, ConfigDict
 
-from src.utilitiesaccounting_v4.schemas.tariff_dto import TariffRelDTO
+from src.utilitiesaccounting.schemas.tariff_dto import TariffRelDTO
 
 
 class DebtDTO(BaseModel):

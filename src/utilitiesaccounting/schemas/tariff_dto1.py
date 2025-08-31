@@ -3,9 +3,9 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from src.utilitiesaccounting_v4.schemas.category_provider_dto import ProviderCategoryDTO
-from src.utilitiesaccounting_v4.schemas.counter_dto import CounterRelDTO
-from src.utilitiesaccounting_v4.schemas.tariff_type_dto import TariffTypeDTO
+from src.utilitiesaccounting.schemas.category_provider_dto import ProviderCategoryDTO
+from src.utilitiesaccounting.schemas.counter_dto import CounterRelDTO
+from src.utilitiesaccounting.schemas.tariff_type_dto import TariffTypeDTO
 
 
 class TariffAddDTO(BaseModel):

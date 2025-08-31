@@ -6,7 +6,7 @@ from typing import List
 from dateutil.relativedelta import *
 from pydantic import BaseModel
 
-from src.utilitiesaccounting_v4.schemas.debt_dto import TypeTariff, SubscriptionTariff, OnTimeTariff, ConsumptionTariff, \
+from src.utilitiesaccounting.schemas.debt_dto import TypeTariff, SubscriptionTariff, OnTimeTariff, ConsumptionTariff, \
     ConsumptionTariffs, SubscriptionTariffs, OnTimeTariffs
 
 

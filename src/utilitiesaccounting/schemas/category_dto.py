@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from src.utilitiesaccounting_v4.schemas.provider_dto import ProviderRelDTO
+from src.utilitiesaccounting.schemas.provider_dto import ProviderRelDTO
 
 
 class CategoryAddDTO(BaseModel):
