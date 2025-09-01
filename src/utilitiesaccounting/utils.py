@@ -11,7 +11,7 @@ from src.utilitiesaccounting.schemas.tariff_dto import TariffDTO
 
 def get_cr_last_position(counter_id: int):
     with StorageManager() as sm:
-        return sm.counter.get(relation=True, id=counter_id)
+        return sm.counterrepository.get(relation=True, id=counter_id)
 
 
 def validate_data(counter_id: int, value: int, date_: date) -> bool:
