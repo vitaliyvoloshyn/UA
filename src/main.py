@@ -11,9 +11,9 @@ from src.utilitiesaccounting.models import *
 fastapi_app = get_app()
 
 if __name__ == '__main__':
-    drop_db()
-    create_db()
-    insert_test_users()
-    insert_test_data()
+    # drop_db()
+    # create_db()
+    # insert_test_users()
+    # insert_test_data()
     # add_data()
     uvicorn.run(app='main:fastapi_app', host=APP_HOST, port=APP_PORT, reload=APP_RELOAD)
