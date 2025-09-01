@@ -344,12 +344,14 @@ counter_readings = [
     CounterReadingAddDTO(value=6334, enter_date=datetime.date(2025, 5, 30), counter_id=2),
     CounterReadingAddDTO(value=6526, enter_date=datetime.date(2025, 6, 30), counter_id=2),
     CounterReadingAddDTO(value=6662, enter_date=datetime.date(2025, 8, 1), counter_id=2),
+    CounterReadingAddDTO(value=6799, enter_date=datetime.date(2025, 9, 1), counter_id=2),
     # electric night tariff
     CounterReadingAddDTO(value=1811, enter_date=datetime.date(2025, 3, 31), counter_id=3),
     CounterReadingAddDTO(value=1907, enter_date=datetime.date(2025, 4, 30), counter_id=3),
     CounterReadingAddDTO(value=1996, enter_date=datetime.date(2025, 5, 30), counter_id=3),
     CounterReadingAddDTO(value=2070, enter_date=datetime.date(2025, 6, 30), counter_id=3),
     CounterReadingAddDTO(value=2107, enter_date=datetime.date(2025, 8, 1), counter_id=3),
+    CounterReadingAddDTO(value=2146, enter_date=datetime.date(2025, 9, 1), counter_id=3),
     # cold water
     CounterReadingAddDTO(value=1208, enter_date=datetime.date(2024, 7, 31), counter_id=6),
     CounterReadingAddDTO(value=1215, enter_date=datetime.date(2024, 8, 31), counter_id=6),
@@ -365,6 +367,7 @@ counter_readings = [
     CounterReadingAddDTO(value=1269, enter_date=datetime.date(2025, 6, 30), counter_id=6),
     CounterReadingAddDTO(value=1274, enter_date=datetime.date(2025, 8, 1), counter_id=6),
     CounterReadingAddDTO(value=1278, enter_date=datetime.date(2025, 8, 20), counter_id=6),
+    CounterReadingAddDTO(value=1280, enter_date=datetime.date(2025, 9, 1), counter_id=6),
     # hot water
     CounterReadingAddDTO(value=584, enter_date=datetime.date(2024, 7, 31), counter_id=5),
     CounterReadingAddDTO(value=584, enter_date=datetime.date(2024, 8, 31), counter_id=5),
@@ -380,6 +383,7 @@ counter_readings = [
     CounterReadingAddDTO(value=594, enter_date=datetime.date(2025, 6, 30), counter_id=5),
     CounterReadingAddDTO(value=596, enter_date=datetime.date(2025, 8, 1), counter_id=5),
     CounterReadingAddDTO(value=597, enter_date=datetime.date(2025, 8, 20), counter_id=5),
+    CounterReadingAddDTO(value=598, enter_date=datetime.date(2025, 9, 1), counter_id=5),
     # gas
     CounterReadingAddDTO(value=312, enter_date=datetime.date(2022, 11, 30), counter_id=4),
     CounterReadingAddDTO(value=323, enter_date=datetime.date(2022, 12, 30), counter_id=4),
@@ -414,6 +418,7 @@ counter_readings = [
     CounterReadingAddDTO(value=560, enter_date=datetime.date(2025, 5, 30), counter_id=4),
     CounterReadingAddDTO(value=567, enter_date=datetime.date(2025, 6, 30), counter_id=4),
     CounterReadingAddDTO(value=576, enter_date=datetime.date(2025, 8, 1), counter_id=4),
+    CounterReadingAddDTO(value=584, enter_date=datetime.date(2025, 9, 1), counter_id=4),
 ]
 
 payments = [
