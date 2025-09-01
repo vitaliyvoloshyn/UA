@@ -98,12 +98,10 @@
 
 
     const btn = document.getElementById('btn_pay');
-    console.log(btn);
     const url = '{{ url_for('add_payments')}}';
 
     btn.addEventListener("click", () => {
     let data = get_data();
-    console.log(data);
     if (data.length > 0){
     setFetch(data)
     }});

@@ -2,77 +2,122 @@
 <html lang="en">
 <head>
 
-  <meta charset="utf-8">
-  <title>Miminium</title>
+    <meta charset="utf-8">
+    <title>Miminium</title>
 
-  <!-- start: Css -->
-  <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/bootstrap.min.css')}}">
+    <!-- start: Css -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/bootstrap.min.css')}}">
 
-  <!-- plugins -->
-  <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/font-awesome.min.css')}}"/>
-  <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/simple-line-icons.css')}}"/>
-  <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/animate.min.css')}}"/>
-  <link href="{{url_for('static', path='/asset/css/style.css')}}" rel="stylesheet">
-  <!-- end: Css -->
+    <!-- plugins -->
+    <link rel="stylesheet" type="text/css"
+          href="{{url_for('static', path='/asset/css/plugins/font-awesome.min.css')}}"/>
+    <link rel="stylesheet" type="text/css"
+          href="{{url_for('static', path='/asset/css/plugins/simple-line-icons.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/animate.min.css')}}"/>
+    <link href="{{url_for('static', path='/asset/css/style.css')}}" rel="stylesheet">
+    <!-- end: Css -->
 
-  <link rel="shortcut icon" href="{{url_for('static', path='/asset/img/logomi.png')}}">
+    <link rel="shortcut icon" href="{{url_for('static', path='/asset/img/logomi.png')}}">
 
-    </head>
+</head>
 
-    <body id="mimin" class="dashboard form-signin-wrapper">
+<body id="mimin" class="dashboard form-signin-wrapper">
 
-      <div class="container">
+<div class="container">
 
-        <form class="form-signin">
-          <div class="panel periodic-login">
-              <div class="panel-body text-center">
-                  <h3 >Система обліку комунальних послуг</h3>
-                  <h4>Реєстрація нового користувача</h4>
+    <form class="form-signin">
+        <div class="panel periodic-login">
+            <div class="panel-body text-center">
+                <h3>Система обліку комунальних послуг</h3>
+                <h4>Реєстрація нового користувача</h4>
 
-                  <i class="icons icon-arrow-down"></i>
-                  <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                <i class="icons icon-arrow-down"></i>
+                <div class="form-group form-animate-text" style="margin-top:40px !important;">
                     <input type="text" class="form-text" required id="first_name">
                     <span class="bar"></span>
                     <label>Ім'я</label>
-                  </div>
-                  <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                </div>
+                <div class="form-group form-animate-text" style="margin-top:40px !important;">
                     <input type="text" class="form-text" required id="last_name">
                     <span class="bar"></span>
                     <label>Прізвище</label>
-                  </div>
-                  <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                </div>
+                <div class="form-group form-animate-text" style="margin-top:40px !important;">
                     <input type="text" class="form-text" required id="email">
                     <span class="bar"></span>
                     <label>Email</label>
-                  </div>
-                  <div class="form-group form-animate-text" style="margin-top:40px !important;">
+                </div>
+                <div class="form-group form-animate-text" style="margin-top:40px !important;">
                     <input type="password" class="form-text" required id="password">
                     <span class="bar"></span>
                     <label>Пароль</label>
-                  </div>
-<!--                  bel>-->
-                  <input type="submit" class="btn col-md-12" value="Зареєструватися"/>
-              </div>
-                <div class="text-center" style="padding:5px;">
-                    <a href="login.html">Вже маєте аккаунт?</a>
                 </div>
-          </div>
-        </form>
+                <!--                  bel>-->
+                <input type="button" class="btn col-md-12" value="reg" id="btn_signup"/>
 
-      </div>
+            </div>
+            <div class="text-center" style="padding:5px;">
+                <a href="login.html">Вже маєте аккаунт?</a>
+            </div>
+        </div>
+    </form>
 
-      <!-- end: Content -->
-      <!-- start: Javascript -->
-      <script src="{{url_for('static', path='/asset/js/jquery.min.js')}}"></script>
-      <script src="{{url_for('static', path='/asset/js/jquery.ui.min.js')}}"></script>
-      <script src="{{url_for('static', path='/asset/js/bootstrap.min.js')}}"></script>
+</div>
+
+<!-- end: Content -->
+<!-- start: Javascript -->
+<script src="{{url_for('static', path='/asset/js/jquery.min.js')}}"></script>
+<script src="{{url_for('static', path='/asset/js/jquery.ui.min.js')}}"></script>
+<script src="{{url_for('static', path='/asset/js/bootstrap.min.js')}}"></script>
 
 
-      <!-- custom -->
-      <script src="{{url_for('static', path='/asset/js/main.js')}}"></script>
-      <script type="text/javascript">
+<!-- custom -->
+<script src="{{url_for('static', path='/asset/js/main.js')}}"></script>
+<script type="text/javascript">
+    const btn = document.getElementById('btn_signup');
+    const url = '{{ url_for('signup')}}';
 
-     </script>
-     <!-- end: Javascript -->
-   </body>
-   </html>
+    btn.addEventListener("click", () => {
+    let data = get_data();
+    if (data) {
+    setFetch(data)
+    }});
+
+
+
+async function setFetch(data) {
+try {
+    const response = await fetch(url, {
+                                    method: 'POST', // или 'PUT'
+                                    body: JSON.stringify(data),
+                                    headers: {
+                                      'Content-Type': 'application/json'
+                                    }});
+    const message = await response.text();
+    window.location.replace(`{{url_for('result_operation')}}?message=${message}`)
+;
+} catch (e) {
+console.error(e);
+}
+}
+
+function get_data() {
+
+        const f = document.getElementById('first_name');
+        const l = document.getElementById('first_name');
+        const m = document.getElementById('email');
+        const p = document.getElementById('password');
+
+        data = {
+                first_name: f.value,
+                last_name: l.value,
+                email: m.value,
+                password: p.value
+                };
+
+    return data
+};
+</script>
+<!-- end: Javascript -->
+</body>
+</html>
