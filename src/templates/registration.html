@@ -2,31 +2,28 @@
 <html lang="en">
 <head>
 
-  <meta charset="utf-8">
-  <meta name="description" content="Miminium Admin Template v.1">
-  <meta name="author" content="Isna Nur Azis">
-  <meta name="keyword" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Miminium</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Комунальні послуги</title>
 
-  <!-- start: Css -->
-  <link rel="stylesheet" type="text/css" href="asset/css/bootstrap.min.css">
+    <!-- start: Css -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/bootstrap.min.css')}}">
 
-  <!-- plugins -->
-  <link rel="stylesheet" type="text/css" href="asset/css/plugins/font-awesome.min.css"/>
-  <link rel="stylesheet" type="text/css" href="asset/css/plugins/simple-line-icons.css"/>
-  <link rel="stylesheet" type="text/css" href="asset/css/plugins/animate.min.css"/>
-  <link rel="stylesheet" type="text/css" href="asset/css/plugins/icheck/skins/flat/aero.css"/>
-  <link href="asset/css/style.css" rel="stylesheet">
-  <!-- end: Css -->
+    <!-- plugins -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/font-awesome.min.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/simple-line-icons.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/animate.min.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/icheck/skins/flat/aero.css')}}"/>
+    <link href="{{url_for('static', path='/asset/css/style.css')}}" rel="stylesheet">
+    <!-- end: Css -->
 
-  <link rel="shortcut icon" href="asset/img/logomi.png">
-  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <link rel="shortcut icon" href="{{url_for('static', path='/asset/img/icon.png')}}">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-      <![endif]-->
-    </head>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
 
 <body id="mimin" class="dashboard form-signin-wrapper">
 
@@ -39,6 +36,7 @@
                 <h4>Реєстрація нового користувача</h4>
 
                 <i class="icons icon-arrow-down"></i>
+                <p>Імя, прізвище та пароль мають містити від 1 до 20-ти символів</p>
                 <div class="form-group form-animate-text" style="margin-top:40px !important;">
                     <input type="text" class="form-text" required id="first_name">
                     <span class="bar"></span>
@@ -60,7 +58,7 @@
                     <label>Пароль</label>
                 </div>
                 <!--                  bel>-->
-                <input type="button" class="btn col-md-12" value="reg" id="btn_signup"/>
+                <input type="button" class="btn col-md-12" value="Зареєструватися" id="btn_signup"/>
 
             </div>
             <div class="text-center" style="padding:5px;">
@@ -77,8 +75,8 @@
 <script src="{{url_for('static', path='/asset/js/jquery.ui.min.js')}}"></script>
 <script src="{{url_for('static', path='/asset/js/bootstrap.min.js')}}"></script>
 
-      <script src="asset/js/plugins/moment.min.js"></script>
-      <script src="asset/js/plugins/icheck.min.js"></script>
+<script src="{{url_for('static', path='/asset/js/plugins/moment.min.js')}}"></script>
+<script src="{{url_for('static', path='/asset/js/plugins/icheck.min.js')}}"></script>
 
 <!-- custom -->
 <script src="{{url_for('static', path='/asset/js/main.js')}}"></script>
@@ -102,8 +100,12 @@ try {
                                     headers: {
                                       'Content-Type': 'application/json'
                                     }});
-    const message = await response.text();
-    window.location.replace(`{{url_for('result_operation')}}?message=${message}`)
+    const response_data = await response.text();
+    if (response.status != 422) {
+    console.log('not 422');
+    window.location.replace(`{{url_for('result_operation')}}?message=${response_data}`)
+    } else {alert("Перевірте Ваші дані.")};
+
 ;
 } catch (e) {
 console.error(e);
