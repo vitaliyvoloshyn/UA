@@ -8,9 +8,9 @@ def user_exist(email: str):
 
     with StorageManager() as sm:
         user_db = sm.userrepository.get_by_email(email)
-        if not user_db:
+        if user_db:
             return True
-    raise ValueError('Користувач з таким email вже зареєстрований в системі')
+    return False
 
 
 def hash_password(password: str) -> bytes:

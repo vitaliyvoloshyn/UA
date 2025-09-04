@@ -15,8 +15,9 @@ class UserRepository(SqlRepository):
     def add(self, record: BaseModel):
         """Добавление нового пользователя. Но сначала проверяется отсутствие этого пользователя в системе"""
         if user_exist(record.email):
-            record.password = hash_password(record.password)
-            super().add(record)
+            raise ValueError('Користувач з таким email вже зареєстрований в системі')
+        record.password = hash_password(record.password)
+        super().add(record)
 
     @staticmethod
     def get_by_email(email: str):
