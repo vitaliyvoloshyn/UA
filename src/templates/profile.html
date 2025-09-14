@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+<!-- start: Content -->
+<div id="content">
+    <div class="panel box-shadow-none content-header">
+        <div class="panel-body">
+            <div class="col-md-12">
+                <h3 class="animated fadeInLeft">Профіль користувача</h3>
+                <p class="animated fadeInDown">
+                    Form <span class="fa-angle-right fa"></span> Form Element
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="form-element">
+        <div class="col-md-12 padding-0">
+            <div class="col-md-8">
+                <div class="panel form-element-padding">
+
+                    <div class="panel-body" style="padding-bottom:30px;">
+
+
+                        <!--                        Фото-->
+                        <div class="col-md-12">
+                            <div class="img-center">
+                                <img class="round img-size" src="{{ url_for('static', path=user.avatar) }}">
+                            </div>
+                        </div>
+                        <!--                        Фото-->
+
+                        <form method="post" action="{{url_for('change_profile')}}" enctype="multipart/form-data">
+                            <div class="col-md-12">
+
+                                <div class="form-group"><label class="col-sm-3 control-label text-right">Ім'я</label>
+                                    <div class="col-sm-4"><input type="text" class="form-control"
+                                                                 name="first_name"
+                                                                 value="{{user.first_name}}"
+                                    >
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label
+                                        class="col-sm-3 control-label text-right">Прізвище</label>
+                                    <div class="col-sm-4"><input type="text" class="form-control"
+                                                                 name="last_name"
+                                                                 value="{{user.last_name}}"
+                                    >
+                                    </div>
+                                </div>
+
+                                <div class="form-group"><label class="col-sm-3 control-label text-right">Email</label>
+                                    <div class="col-sm-4"><input type="email" class="form-control"
+                                                                 value="{{user.email}}"
+                                                                 disabled
+                                    >
+                                    </div>
+                                </div>
+                                <div class="form-group"><label class="col-sm-3 control-label text-right">Дата
+                                    реєстрації</label>
+                                    <div class="col-sm-4"><input type="date" class="form-control"
+                                                                 value=""
+                                                                 disabled
+                                    >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+
+                                <!--                        блок загрузки файла-->
+                                <div class="form-group">Для зміни фото завантажте нове фото на сервер
+                                    <div class="field__wrapper">
+                                        <input name="file" type="file" id="field__file-2" class="field field__file"
+                                               accept="image/*">
+                                        <label class="field__file-wrapper" for="field__file-2">
+                                            <div class="field__file-fake">Файл не вибраний</div>
+                                            <div class="field__file-button">Завантажити файл</div>
+                                        </label>
+
+                                    </div>
+                                </div>
+                                <!--                        блок загрузки файла-->
+                                <div style="padding-top: 0.5%">
+                                    <hr style="border: 1px solid">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <font style="vertical-align: inherit;">
+                                        <font style="vertical-align: inherit;"><input type="submit"
+                                                                                      class=" btn btn-round btn-primary"
+                                                                                      value="Зберегти"
+                                                                                      id="btn_save">
+                                        </font>
+                                    </font>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {{tariff}}
+    <!-- end: content -->
+</div>
+
+
+<!-- plugins -->
+<script src="{{ url_for('static', path='/asset/js/plugins/moment.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/jquery.knob.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/ion.rangeSlider.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/bootstrap-material-datetimepicker.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/jquery.nicescroll.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/jquery.mask.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/select2.full.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/nouislider.min.js') }}"></script>
+<script src="{{ url_for('static', path='/asset/js/plugins/jquery.validate.min.js') }}"></script>
+
+
+<!-- custom -->
+<script src="{{ url_for('static', path='/asset/js/main.js') }}"></script>
+<script type="text/javascript">
+
+    let fd = document.getElementById("from_date");
+    let v = document.getElementById("value");
+    fd.valueAsDate = new Date();
+
+
+    const btn = document.getElementById('btn_save');
+    const url = '#';
+
+    btn.addEventListener("click", () => {
+    let data = get_data();
+    console.log(data);
+    setFetch(data);
+    });
+
+
+
+async function setFetch(data) {
+try {
+    const response = await fetch(url, {
+                                    method: 'POST', // или 'PUT'
+                                    body: JSON.stringify(data),
+                                    headers: {
+                                      'Content-Type': 'application/json'
+                                    }});
+
+    const message = await response.text();
+    window.location.replace(`{{url_for('result_operation')}}?message=${message}`)
+
+} catch (e) {
+console.error(e);
+}
+}
+
+
+
+
+
+function get_data() {
+    let data = {}
+    try {
+
+        data['value'] = v.value;
+        data['from_date'] = fd.value;
+
+
+
+    }
+    catch (error){console.log('error in get_data', error)};
+
+    return data
+};
+</script>
+<script>
+    <!--    Для блока загрузки файла-->
+        let fields = document.querySelectorAll('.field__file');
+        Array.prototype.forEach.call(fields, function (input) {
+          let label = input.nextElementSibling,
+            labelVal = label.querySelector('.field__file-fake').innerText;
+
+          input.addEventListener('change', function (e) {
+            let countFiles = '';
+            if (this.files && this.files.length >= 1)
+              countFiles = `${this.files.length} +  (${this.files[0].name})`;
+
+            if (countFiles)
+              label.querySelector('.field__file-fake').innerText = 'Вибрано файлів: ' + countFiles;
+            else
+              label.querySelector('.field__file-fake').innerText = labelVal;
+          });
+        });
+</script>
+
+<!-- end: Javascript -->
+</body>
+</html>
+{% endblock content %}
+

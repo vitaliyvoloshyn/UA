@@ -1,9 +1,10 @@
 from typing import List
 
 import loguru
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from starlette.responses import JSONResponse
 
+from src.auth.service import check_user_permissions_api
 from src.utilitiesaccounting.schemas.counter_reading_dto import CounterReadingAddDTO, CounterReadingDTO
 from src.utilitiesaccounting.schemas.payment_dto import PaymentAddDTO, PaymentDTO
 from src.utilitiesaccounting.schemas.result_content import SuccessResultContent, ErrorResultContent
@@ -13,7 +14,8 @@ from src.core.uow import StorageManager
 
 api_router = APIRouter(
     prefix='/api',
-    tags=['API']
+    tags=['API'],
+    dependencies=[Depends(check_user_permissions_api)]
 )
 
 
@@ -51,7 +53,7 @@ def get_crs() -> List[CounterReadingDTO]:
 @api_router.get('/counter_readings/{pk}', name='cr')
 def get_cr_by_id(pk: int) -> CounterReadingDTO:
     with StorageManager() as sm:
-        cr = sm.counterreadingrepository.get(id=pk)
+        cr = sm.counterreadingrepository.get_by_id(id=pk)
     return cr
 
 
@@ -102,7 +104,7 @@ def get_payments() -> List[PaymentDTO]:
 @api_router.get('/payments/{item_id}')
 def get_payment(item_id: int) -> List[PaymentDTO]:
     with StorageManager() as sm:
-        payments = sm.payment.get(id=item_id)
+        payments = sm.paymentrepository.get(id=item_id)
     return payments
 
 

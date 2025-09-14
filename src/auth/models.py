@@ -11,3 +11,6 @@ class User(Base):
     last_name: Mapped[str]
     email: Mapped[str]
     password: Mapped[str]
+    is_active: Mapped[bool] = mapped_column(server_default='True')
+    is_admin: Mapped[bool] = mapped_column(server_default='False')
+    avatar: Mapped[str] = mapped_column(nullable=True)
