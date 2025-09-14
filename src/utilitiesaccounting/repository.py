@@ -159,4 +159,3 @@ StorageManager.register_repository([
     MeasurementUnitRepository,
     PaymentRepository,
 ])
-print(StorageManager.__dict__)

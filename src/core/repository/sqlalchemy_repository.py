@@ -1,4 +1,4 @@
-from typing import Type, Sequence
+from typing import Sequence
 
 from loguru import logger
 from pydantic import BaseModel
@@ -45,8 +45,8 @@ class SqlRepository(RepositoryBase):
         return schemas
 
     def get_by_id(self, id: int, relation: bool = False, convert: bool = True):
-        query = select(self.model).where(id=id)
-        res = self.get(relation, convert, query)
+        # query = select(self.model).where(id=id)
+        res = self.get(id=id)
         if res:
             return res[0]
 
@@ -62,7 +62,7 @@ class SqlRepository(RepositoryBase):
 
     def _convert_sql_to_schema(self, sql, relation: bool = False):
         """Конвертирует SQL-модель в схему. Возвращает список схем"""
-        dto: SchemaModel = self.dto
+        dto = self.dto
         if relation:
             dto = self.dto_rel
         schema = [dto.model_validate(sch, from_attributes=True) for sch in sql]

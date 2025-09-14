@@ -25,7 +25,7 @@ class TariffAddDTO(BaseModel):
         """При tariff_type_id 2 має поле id лічильника не може бути порожнім (None)"""
         if not data:
             raise ValueError('Помилка валідаціі TarifAddDTO - пустий масив даних')
-        if isinstance(data, Base):
+        if isinstance(data, (BaseModel, Base)):
             return data
         if int(data['tariff_type_id']) == 2:
             if not data.get('counter_id'):

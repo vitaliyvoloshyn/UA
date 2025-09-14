@@ -10,10 +10,13 @@
     <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/bootstrap.min.css')}}">
 
     <!-- plugins -->
-    <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/font-awesome.min.css')}}"/>
-    <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/simple-line-icons.css')}}"/>
+    <link rel="stylesheet" type="text/css"
+          href="{{url_for('static', path='/asset/css/plugins/font-awesome.min.css')}}"/>
+    <link rel="stylesheet" type="text/css"
+          href="{{url_for('static', path='/asset/css/plugins/simple-line-icons.css')}}"/>
     <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/animate.min.css')}}"/>
-    <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/asset/css/plugins/icheck/skins/flat/aero.css')}}"/>
+    <link rel="stylesheet" type="text/css"
+          href="{{url_for('static', path='/asset/css/plugins/icheck/skins/flat/aero.css')}}"/>
     <link href="{{url_for('static', path='/asset/css/style.css')}}" rel="stylesheet">
     <!-- end: Css -->
 
@@ -33,20 +36,10 @@
         <div class="panel periodic-login">
             <div class="panel-body text-center">
                 <h3>Система обліку комунальних послуг</h3>
-                <h4>Реєстрація нового користувача</h4>
+                <h4>Автентифікація користувача</h4>
 
                 <i class="icons icon-arrow-down"></i>
-                <p>Імя, прізвище та пароль мають містити від 1 до 20-ти символів</p>
-                <div class="form-group form-animate-text" style="margin-top:40px !important;">
-                    <input type="text" class="form-text" required id="first_name">
-                    <span class="bar"></span>
-                    <label>Ім'я</label>
-                </div>
-                <div class="form-group form-animate-text" style="margin-top:40px !important;">
-                    <input type="text" class="form-text" required id="last_name">
-                    <span class="bar"></span>
-                    <label>Прізвище</label>
-                </div>
+
                 <div class="form-group form-animate-text" style="margin-top:40px !important;">
                     <input type="text" class="form-text" required id="email">
                     <span class="bar"></span>
@@ -58,11 +51,11 @@
                     <label>Пароль</label>
                 </div>
                 <!--                  bel>-->
-                <input type="button" class="btn col-md-12" value="Зареєструватися" id="btn_signup"/>
+                <input type="button" class="btn col-md-12" value="Увійти" id="btn_signin"/>
 
             </div>
             <div class="text-center" style="padding:5px;">
-                <a href="{{url_for('login')}}">Вже маєте аккаунт?</a>
+                <a href="{{url_for('reg')}}">Ще не маєте аккаунта?</a>
             </div>
         </div>
     </form>
@@ -81,8 +74,8 @@
 <!-- custom -->
 <script src="{{url_for('static', path='/asset/js/main.js')}}"></script>
 <script type="text/javascript">
-    const btn = document.getElementById('btn_signup');
-    const url = '{{ url_for('signup')}}';
+    const btn = document.getElementById('btn_signin');
+    const url = '{{ url_for('signin')}}';
 
     btn.addEventListener("click", () => {
     let data = get_data();
@@ -101,10 +94,9 @@ try {
                                       'Content-Type': 'application/json'
                                     }});
     const response_data = await response.text();
-    if (response.status != 422) {
-    console.log('not 422');
-    window.location.replace(`{{url_for('result_operation')}}?message=${response_data}`)
-    } else {alert("Перевірте Ваші дані.")};
+    if (response.status == 200) {
+    window.location.replace(`{{url_for('home')}}`)
+    } else {alert(response_data)};
 
 ;
 } catch (e) {
@@ -114,14 +106,10 @@ console.error(e);
 
 function get_data() {
 
-        const f = document.getElementById('first_name');
-        const l = document.getElementById('first_name');
         const m = document.getElementById('email');
         const p = document.getElementById('password');
 
         data = {
-                first_name: f.value,
-                last_name: l.value,
                 email: m.value,
                 password: p.value
                 };

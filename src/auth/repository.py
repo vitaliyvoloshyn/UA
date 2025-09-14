@@ -23,7 +23,7 @@ class UserRepository(SqlRepository):
     def get_by_email(email: str):
         with StorageManager() as sm:
             user = sm.userrepository.get(email=email)
-        return user or None
+        return user[0] if user else None
 
 
 StorageManager.register_repository(UserRepository)
